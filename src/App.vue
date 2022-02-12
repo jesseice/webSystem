@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Login  from '../view/login'
+import Login  from '@/view/login'
 export default {
   components:{
     Login

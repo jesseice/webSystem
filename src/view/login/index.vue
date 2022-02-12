@@ -10,7 +10,7 @@
           <el-form-item  prop="acount" :rules="[{ required: true, message: '用户名不能为空'}]">
             <el-input :clearable='true' placeholder="用户名" v-model="form.acount"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item prop="password" :rules="[{ required: true, message: '密码不能为空'}]">
             <el-input :clearable='true' placeholder="请输入密码" v-model="form.password" show-password></el-input>
             <!-- <el-input  v-model="input" show-password></el-input> -->
           </el-form-item>
@@ -22,16 +22,16 @@
       <!-- 注册 -->
       <div class="p-login__wrap" v-else>
         <el-form ref="form2" :model="form" label-width="120px">
-          <el-form-item>
+          <el-form-item prop="acount" :rules="[{ required: true, message: '用户名不能为空'}]">
             <el-input :clearable='true' placeholder="用户名" v-model="form.acount"></el-input>
           </el-form-item>
-          <el-form-item>
-            <el-input :clearable='true' placeholder="设置密码" v-model="form.newPassword" show-password></el-input>
+          <el-form-item prop="password" :rules="[{ required: true, message: '密码不能为空'}]">
+            <el-input :clearable='true' placeholder="设置密码" v-model="form.password" show-password></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input :clearable='true' placeholder="确认密码" v-model="form.password" show-password></el-input>
+            <el-input :clearable='true' type="password" placeholder="确认密码" v-model="form.newPassword"></el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item prop="phone" :rules="[{ required: true, message: '手机号不能为空'}]">
             <el-input oninput = "value=value.replace(/[^\d]/g,'')" :clearable='true' placeholder="请输入手机号码" v-model="form.phone"></el-input>
           </el-form-item>
           <el-button type="primary" size="medium" @click="regist">注册</el-button>
@@ -44,7 +44,8 @@
 </template>
 
 <script>
-import { registUser } from '@/api'
+import api from '@/api/index'
+import crypto from '@/util/crypto'
 export default {
 
   data() {
@@ -59,34 +60,77 @@ export default {
     };
   },
   methods:{
-    // 登录
+    // 登录form1表
     login(){
-      this.$refs['form1'].validate((valid) => {
+      this.$refs['form1'].validate(async(valid) => {
         if (valid) {
-          alert('submit!');
+          // alert('submit!')
+          console.log(this.form.acount);
+          console.log(this.form.password);
+          const aa = crypto.Encrypt(this.form.password)
+         
+          const res = await api.login({userName:this.form.acount,userPassword:aa})
+          console.log(res)
+          if(res.data.msg === "登录成功！"){
+            this.$nextTick(()=>{
+              this.resetForm(1)
+            })
+          }
+          this.$message.error(res.data.msg)
         } else {
-          console.log('error submit!!');
-          return false;
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    // 注册逻辑，有接口请求from2表
+    async regist(){
+      let flag = false
+      this.$refs['form2'].validate((valid) => {
+        if (valid) {
+          flag = true
+        } else {
+          flag = false
+          console.log('请重新输入')
+          return false
         }
       });
-    },
-    // 注册逻辑，有接口请求
-    async regist(){
+      if(!flag){return false}
       const form = this.form
-      const res = await registUser({userName:form.acount,userPassword:form.password,userPhone:form.phone})
+      if(form.newPassword!==form.password){return this.$message.error('两次密码不一样')}
+
+      form.password = crypto.Encrypt(form.password)
+      // 连接接口
+      const res = await api.registUser({userName:form.acount,userPassword:form.password,userPhone:form.phone})
       if(res.data.errno){
-        return console.log('注册失败');
+        return this.$message.error('注册失败')
       }
-      console.log(res.data.msg)
+      this.$message.success(res.data.msg)
+      this.form = this.$options.data().form
+      this.registOrLogin = 1
     },
 
     // 切换登录和注册界面
     changeInput(index){
+      this.resetForm(index)
       if(index===0){
         this.registOrLogin = 1
       }else{
         this.registOrLogin = 0
       }
+    },
+
+    // 重置表单
+    resetForm(index){
+      let str = ''
+      if(index ===1){
+        str = 'form1'
+      }else{
+        str = 'form2'
+      }
+      this.$nextTick(()=>{
+        this.$refs[str].resetFields()
+      })
     }
   }
 }

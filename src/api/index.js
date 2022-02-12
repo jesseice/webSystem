@@ -1,10 +1,7 @@
-import request from "../util/request";
+import { registUser } from './regist';
+import { login } from './login'
 
-// regist注册
-export const registUser = data=>{
-  return request({
-    method:'POST',
-    url:'/api/regist',
-    data
-  })
+export default {
+  registUser, // 注册
+  login
 }
