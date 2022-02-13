@@ -72,11 +72,16 @@ export default {
           const res = await api.login({userName:this.form.acount,userPassword:aa})
           console.log(res)
           if(res.data.msg === "登录成功！"){
+            this.$message.success(res.data.msg)
+            
+            // 设置登录属性 
+
             this.$nextTick(()=>{
               this.resetForm(1)
             })
+          }else{
+            this.$message.error(res.data.msg)
           }
-          this.$message.error(res.data.msg)
         } else {
           console.log('error submit!!')
           return false

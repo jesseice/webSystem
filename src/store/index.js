@@ -11,9 +11,7 @@ export default new Vuex.Store({
 
   },
   actions:{
-    regist(){
-      
-    }
+    
   },
   getters:{
     
