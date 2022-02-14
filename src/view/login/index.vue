@@ -14,7 +14,7 @@
             <el-input :clearable='true' placeholder="请输入密码" v-model="form.password" show-password></el-input>
             <!-- <el-input  v-model="input" show-password></el-input> -->
           </el-form-item>
-          <el-button type="primary" size="medium" @click="login">登录</el-button>
+          <el-button type="primary" size="medium" @keyup.enter="login" @click="login">登录</el-button>
         </el-form>
         <el-button type="text" @click="changeInput(1)">没有账号？现在去注册</el-button>
       </div>
@@ -46,6 +46,7 @@
 <script>
 import api from '@/api/index'
 import crypto from '@/util/crypto'
+import { setItem } from '@/util/storage'
 export default {
 
   data() {
@@ -59,26 +60,30 @@ export default {
       registOrLogin:1
     };
   },
+  mounted(){
+    window.addEventListener('keydown',this.keydown);
+  },
+  destroyed(){
+    window.removeEventListener('keydown',this.keydown,false);
+  },
   methods:{
-    // 登录form1表
+    // 登录 form1表
     login(){
       this.$refs['form1'].validate(async(valid) => {
         if (valid) {
-          // alert('submit!')
-          console.log(this.form.acount);
-          console.log(this.form.password);
           const aa = crypto.Encrypt(this.form.password)
          
           const res = await api.login({userName:this.form.acount,userPassword:aa})
-          console.log(res)
-          if(res.data.msg === "登录成功！"){
-            this.$message.success(res.data.msg)
-            
-            // 设置登录属性 
 
-            this.$nextTick(()=>{
-              this.resetForm(1)
-            })
+          console.log(res.data.token)
+
+          if(res.data.code === "200"){
+            this.$message.success(res.data.msg)
+            setItem("USER_KEY",res.data.token)
+            setItem("USER_NAME",this.form.acount)
+            // 设置登录属性 
+            this.$store.commit('updateLogin')
+            this.$router.push({path:'/'})
           }else{
             this.$message.error(res.data.msg)
           }
@@ -136,6 +141,12 @@ export default {
       this.$nextTick(()=>{
         this.$refs[str].resetFields()
       })
+    },
+
+    keydown(e){
+      if(e.keyCode===13){
+        this.login()
+      }
     }
   }
 }
