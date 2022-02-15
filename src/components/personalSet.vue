@@ -5,7 +5,7 @@
       :size="250"
       :modal="false"
       :show-close="false"
-      title="个人设置"
+      title="个人中心"
       :visible.sync="drawer"
       :direction="direction">
       <el-menu
