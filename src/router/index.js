@@ -15,7 +15,14 @@ const routes = [
       {
         path:'/exam',
         name:'exam',
-        component: () => import('@/view/exam')
+        component: () => import('@/view/exam'),
+        children:[
+          {
+            path:'radexam',
+            name:'radexam',
+            component: ()=> import('@/components/subject')
+          }
+        ]
       },
       {
         path:'/draw',

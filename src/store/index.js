@@ -6,12 +6,16 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state:{
-    token: getItem('USER_KEY')|| ''
+    token: getItem('USER_KEY')|| '',
+    isExam:false
   },
   mutations:{
     // 更新登录状态
     updateLogin(ctx){
       ctx.token = getItem('USER_KEY') || ''
+    },
+    updateIsExam(ctx){
+      ctx.isExam = !ctx.isExam
     }
   },
   actions:{

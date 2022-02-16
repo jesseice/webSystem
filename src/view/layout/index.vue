@@ -8,7 +8,7 @@
       background-color="#409EFF"
       text-color="#fff"
       active-text-color="#ffd04b">
-      <el-menu-item index="1">首页</el-menu-item>
+      <el-menu-item index="1" >首页</el-menu-item>
       <el-menu-item index="2">模拟考试</el-menu-item>
       <el-menu-item index="3">创建题目</el-menu-item>
       <el-menu-item index="4">个人题库</el-menu-item>
@@ -35,8 +35,8 @@ export default {
   },
   data() {
     return {
-      activeIndex:'',
-      currentIndex:'',
+      activeIndex:'0',
+      currentIndex:'1',
       user_name:'小a程序猿'
     };
   },
@@ -88,17 +88,17 @@ export default {
     },
     // 创建题目
     draw(){
-      this.$router.push({ path: 'draw' })
+      this.$router.push({ path: '/draw' })
       // console.log('创建题目');
     },
     // 个人题库
     question(){
-      this.$router.push({ path: 'question' })
+      this.$router.push({ path: '/question' })
       // console.log('个人题库');
     },
     login(index){
       if(index ===1){
-        this.$router.push({path:'login'})
+        this.$router.push({path:'/login'})
       }else if(index === 2){
         // 打开抽屉
         eventBus.$emit('ctrDrawer')

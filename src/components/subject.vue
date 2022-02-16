@@ -13,9 +13,41 @@
 
 <script>
 import RadioSelect from '@/components/radioSelect.vue'
+import api from '@/api/index'
 export default {
   components:{
     RadioSelect
+  },
+  beforeRouteLeave(to,from,next){
+    console.log(to);
+    console.log(from);
+    this.$confirm('确定退出考试？', '确认信息', {
+      confirmButtonText: '确认',
+      cancelButtonText: '误触了',
+      type: 'warning',
+      center: true
+    }).then(() => {
+      this.$message({
+        type: 'success',
+        message: '已退出考试状态!'
+      });
+      next()
+    }).catch(() => {
+    });
+  },
+  async created(){
+    let res = await api.getSubject()
+    res = res.data
+    if(res.code === 200){
+      console.log(1);
+      res.data.forEach(val=>{
+        val.subject_select = val.subject_select.split('&&')
+        this.subject1.push(val)
+      })
+    }else{
+      console.log('获取出错');
+    }
+    console.log(this.subject1)
   },
   data() {
     return {
@@ -26,6 +58,7 @@ export default {
         '3':['display:inline','display:none','display:block','display:inherit'],
         '4':['display:inline','display:none','display:block','display:inherit'],
       },
+      subject1:[],
       sbjType:'单选题'
     };
   },
