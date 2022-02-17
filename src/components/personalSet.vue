@@ -74,10 +74,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '退出成功!'
-        })
+        this.$message.success('退出成功!')
         removeItem('USER_KEY')
         this.$store.commit('updateLogin')
         eventBus.$emit('ctrDrawer')

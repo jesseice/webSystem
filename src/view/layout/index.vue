@@ -35,12 +35,12 @@ export default {
   },
   data() {
     return {
-      activeIndex:'0',
+      activeIndex:'1',
       currentIndex:'1',
       user_name:'小a程序猿'
     };
   },
-  beforeRouteEnter(to, from, next){
+  beforeRouteEnter(to, from, next){ 
     next(vm=>{
       vm.user_name = getItem('USER_NAME')
     })
@@ -83,7 +83,7 @@ export default {
     },
     // 模拟考试
     exam(){
-      this.$router.push({ path: 'exam' })
+      this.$router.push({ path: '/exam' })
       // console.log('模拟考试');
     },
     // 创建题目

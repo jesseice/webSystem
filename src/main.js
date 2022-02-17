@@ -4,12 +4,13 @@ import router from './router'
 import store from './store'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-import './util/message'
+import message from './util/message'
 import '@/styles/reset.css';
 
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false
+Vue.prototype.$message = message
 
 new Vue({
   router,

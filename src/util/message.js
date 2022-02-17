@@ -1,16 +1,16 @@
-import Vue from 'vue'
 import { Message } from "element-ui";
 
-const messageTypes = ["success","errr","warn","info"];
+const messageTypes = ["success","error","warn","info"];
 const message = {}
 messageTypes.forEach((item)=>{
   message[item] = (msg)=>{
     return Message({
-      showClose:true,
+      showClose:false,
       type:item,
-      message:msg
+      message:msg,
+      duration:1000
     })
   }
 })
 
-Vue.prototype.$message = message
+export default message

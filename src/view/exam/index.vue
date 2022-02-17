@@ -19,15 +19,13 @@ export default {
   },
   methods:{
     fn(){
+      if(!this.$store.getters.isLogin){return this.$message.error('请登录')}
       this.$confirm('是否进入全屏考试状态', '小提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '进入考试状态!'
-        })
+        this.$message.success('进入考试状态!')
         this.isShow = false
         this.$store.commit('updateIsExam')
         this.$router.push({path:'exam/radexam'})
