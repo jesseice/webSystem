@@ -6,3 +6,12 @@ export const getSubject = ()=>{
     url:'/user/exam'
   })
 }
+
+// 提交答案
+export const commitResult = data=>{
+  return request({
+    method:'POST',
+    url:'/user/cmtresult',
+    data
+  })
+}

@@ -16,6 +16,14 @@ export default {
     items:{
       type:Array,
       default:()=>[]
+    },
+    subject_id:{
+      type:String,
+      default:''
+    },
+    subject_type:{
+      type:Number,
+      default:0
     }
   },
   data() {
@@ -26,6 +34,7 @@ export default {
   methods:{
     select(index){
       this.currentIndex = index
+      this.$emit('setRes',this.subject_id,`${index}`,this.subject_type)
     }
   }
 }

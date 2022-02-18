@@ -1,7 +1,11 @@
 <template>
 <!-- wyd-单选、判断选项组件 -->
   <div class="c-multiple-select">
-    <div :class="{'c-multiple-select__wrap':true,'active':currentIndex[index]===true}" @click="select(index)" v-for="(item,index) in items" :key="index">
+    <div
+      :class="{'c-multiple-select__wrap':true,
+      'active':currentIndex[index]===true}"
+      @click="select(index)" v-for="(item,index) in items" 
+      :key="index">
       <p class="c-multiple-select__select">{{item}}</p>
     </div>
   </div>
@@ -16,6 +20,14 @@ export default {
     items:{
       type:Array,
       default:()=>[]
+    },
+    subject_id:{
+      type:String,
+      default:''
+    },
+    subject_type:{
+      type:Number,
+      default:0
     }
   },
   created(){
@@ -26,11 +38,21 @@ export default {
   data() {
     return {
       currentIndex:{},
+      subject_result:[]
     };
   },
   methods:{
     select(index){
       this.currentIndex[index] = !this.currentIndex[index]
+      this.subject_result = []
+      for(let k in this.currentIndex){
+        if(this.currentIndex[k]===true){
+          console.log(k);
+          this.subject_result.push(k)
+        }
+      }
+      const str = this.subject_result.join('&&')
+      this.$emit('setRes',this.subject_id,str,this.subject_type) 
       this.$forceUpdate()
     }
   }

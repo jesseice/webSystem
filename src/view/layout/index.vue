@@ -115,7 +115,7 @@ export default {
     top: 0;
     box-sizing: border-box;
     width: 100%;
-    min-width: 970px;
+    min-width: 1045px;
     padding: 0 250px;
     .p-layout__login{
       position: absolute;
