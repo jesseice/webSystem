@@ -54,9 +54,7 @@ export default {
       document.onselectstart = new Function("event.returnValue=false");  // 禁用选择
     })
     let res = await api.getSubject()
-    res = res.data
     if(res.code === 200){
-      console.log(1);
       res.data.forEach(val=>{
         val.subject_select = val.subject_select.split('&&')
         this.subject.push(val)

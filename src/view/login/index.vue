@@ -14,9 +14,9 @@
             <el-input :clearable='true' placeholder="请输入密码" v-model="form.password" show-password></el-input>
             <!-- <el-input  v-model="input" show-password></el-input> -->
           </el-form-item>
-          <el-button type="primary" size="medium" @keyup.enter="login" @click="login">登录</el-button>
+          <el-button type="primary" size="medium" @keyup.enter="login" @click="login" :loading="loading">{{!loading?'登录':'登陆中...'}}</el-button>
         </el-form>
-        <el-button type="text" @click="changeInput(1)">没有账号？现在去注册</el-button>
+        <el-button type="text" @click="changeInput(1)">没有账号?现在去注册</el-button>
       </div>
       <!-- ----------- -->
       <!-- 注册 -->
@@ -34,9 +34,9 @@
           <el-form-item prop="phone" :rules="[{ required: true, message: '手机号不能为空'}]">
             <el-input oninput = "value=value.replace(/[^\d]/g,'')" :clearable='true' placeholder="请输入手机号码" v-model="form.phone"></el-input>
           </el-form-item>
-          <el-button type="primary" size="medium" @click="regist">注册</el-button>
+          <el-button type="primary" size="medium" @click="regist" :loading="loading" >{{!loading?'注册':'注册中...'}}</el-button>
         </el-form>
-        <el-button type="text" @click="changeInput(0)">已有账号？现在去登录</el-button>
+        <el-button type="text" @click="changeInput(0)">已有账号?现在去登录</el-button>
       </div>
       <!-- --------------- -->
     </el-card>
@@ -57,7 +57,8 @@ export default {
         newPassword:'',
         phone:''
       },
-      registOrLogin:1
+      registOrLogin:1,
+      loading:false
     };
   },
   mounted(){
@@ -71,21 +72,24 @@ export default {
     login(){
       this.$refs['form1'].validate(async(valid) => {
         if (valid) {
+          this.loading = true
+
           const aa = crypto.Encrypt(this.form.password)
          
           const res = await api.login({userName:this.form.acount,userPassword:aa})
 
-          console.log(res.data.token)
+          console.log(res.token)
 
-          if(res.data.code === "200"){
-            this.$message.success(res.data.msg)
-            setItem("USER_KEY",res.data.token)
+          if(res.code === "200"){
+            this.$message.success(res.msg)
+            setItem("USER_KEY",res.token)
             setItem("USER_NAME",this.form.acount)
             // 设置登录属性 
             this.$store.commit('updateLogin')
             this.$router.push({path:'/'})
           }else{
-            this.$message.error(res.data.msg)
+            this.loading = false
+            this.$message.error(res.msg)
           }
         } else {
           console.log('error submit!!')
@@ -108,14 +112,19 @@ export default {
       if(!flag){return false}
       const form = this.form
       if(form.newPassword!==form.password){return this.$message.error('两次密码不一样')}
-
+      this.loading = true
       form.password = crypto.Encrypt(form.password)
       // 连接接口
       const res = await api.registUser({userName:form.acount,userPassword:form.password,userPhone:form.phone})
-      if(res.data.errno){
-        return this.$message.error('注册失败')
+      console.log('--------');
+      console.log(res);
+      console.log('--------');
+      if(res.errno){
+        this.loading = false
+        return this.$message.error('注册失败,该账号名已被注册!')
       }
-      this.$message.success(res.data.msg)
+      this.loading = false
+      this.$message.success(res.msg)
       this.form = this.$options.data().form
       this.registOrLogin = 1
     },
