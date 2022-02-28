@@ -12,7 +12,8 @@
         <el-input type="textarea" v-model="form.title"></el-input>
       </el-form-item>
       <el-form-item
-        :rules="{  type:'array',required: true, message: '请输入选项', trigger: 'blur' }"
+        :prop="`select[${index}].value`"
+        :rules="rules.value"
         v-show="form.type"
         :label="`选项${index+1}`"
         v-for="(item,index) in form.select"
@@ -38,7 +39,7 @@
         >
         </el-button>
       </el-form-item>
-      <el-form-item v-if="form.type" label="选项答案">
+      <el-form-item v-if="form.type" label="选项答案" :prop="form.type===2?'resList':'res'">
         <!-- 单选 -->
         <el-radio-group v-if="form.type==='0'||form.type==='1'" v-model="form.res">
           <el-radio :label="index" v-for="(item,index) in form.select" :key="index">{{'选项'+(index+1)}}</el-radio>
@@ -50,9 +51,12 @@
         </el-checkbox-group>
 
       </el-form-item>
+      <el-form-item label="题目标签">
+        <tag :list="tagList" @setTags=setTag></tag>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
-        <el-button>取消</el-button>
+        <el-button @click="reSet">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -60,86 +64,111 @@
 
 <script>
 import api from '@/api'
+import Tag from '@/components/tag'
 export default {
-    data() {
-      return {
-        form: {
-          title: '',
-          select: [
-            {
-              value:''
-            },
-          ],
-          type: '',
-          resList:[],
-          res:''
-        },
-        rules:{
-          title:[
-            { required: true, message: '请输入题目标题', trigger: 'blur' },
-          ],
-          type:[
-            { required: true, message: '请选择题目类型', trigger: 'change' }
-          ],
-          // "select[?].value":[
-          //     { required: true, message: '请选择题目类型', trigger: 'blur' }
-          // ]
-        }
-      }
-    },
-    methods: {
-      onSubmit() {
-        this.$refs['form'].validate(valid=>{
-          if(valid){
-            this.draw() // 提交
-          }else{
-            this.$message.error('提交失败!请检查输入格式!')
-          }
-        })
+  components:{
+    Tag
+  },
+  data() {
+    return {
+      tagList:[],
+      form: {
+        title: '',
+        select: [
+          {
+            value:''
+          },
+        ],
+        type: '',
+        resList:[],
+        res:'',
+        tags:[]
       },
-      async draw(){
-        const _form = this.form
-        let subject_result
-        let subject_select = []
-        if(_form.type === '2'){
-          subject_result = _form.resList.join("&&")
-        }else{
-          subject_result = _form.res
-        }
-        
-        for(let i=0;i<_form.select.length;i++){
-          subject_select.push(_form.select[i].value)
-        }
-        subject_select = subject_select.join("&&")
-
-        const form = {
-          subject_result,
-          subject_type:_form.type,
-          subject_title:_form.title,
-          subject_select
-        }
-        const res = await api.createQ(form)
-        console.log(res);
-      },
-      addSelect(){
-        const form = this.form
-        const select = this.form.select
-        const type = form.type
-        if(type === '1'&&select.length>=2){
-          return false
-        }
-        select.push({
-          value:''
-        })
-
-        // this.subResult()
-      },
-      removeDomain(index){
-        this.form.select.splice(index,1)
-      },
-      subResult(){
+      rules:{
+        title:[
+          { required: true, message: '请输入题目标题', trigger: 'blur' },
+        ],
+        type:[
+          { required: true, message: '请选择题目类型', trigger: 'change' }
+        ],
+        value:[
+            { required: true, message: '请选择题目类型', trigger: 'blur' }
+        ],
+        resList:[
+            { required: true, message: '请选择题目类型', trigger: 'blur' }
+        ],
+        res:[
+            { required: true, message: '请选择题目类型', trigger: 'blur' }
+        ],
       }
     }
+  },
+  async created(){
+    const resTag = await api.getTag()
+    this.tagList = resTag.data
+    console.log(resTag)
+  },
+  methods: {
+    onSubmit() {
+      this.$refs['form'].validate(valid=>{
+        if(valid){
+          this.draw() // 提交
+        }else{
+          this.$message.error('提交失败!请检查输入格式!')
+        }
+      })
+    },
+    reSet(){
+      this.$refs['form'].resetFields()
+    },
+    async draw(){
+      const _form = this.form
+      let subject_result
+      let subject_select = []
+      if(_form.type === '2'){
+        subject_result = _form.resList.join("&&")
+      }else{
+        subject_result = _form.res
+      }
+      
+      for(let i=0;i<_form.select.length;i++){
+        subject_select.push(_form.select[i].value)
+      }
+      subject_select = subject_select.join("&&")
+
+      const form = {
+        subject_result,
+        subject_type:_form.type,
+        subject_title:_form.title,
+        subject_select,
+        tags:_form.tags
+      }
+      const res = await api.createQ(form)
+      console.log(res);
+    },
+    addSelect(){
+      const form = this.form
+      const select = this.form.select
+      const type = form.type
+      if(type === '1'&&select.length>=2){
+        return false
+      }
+      select.push({
+        value:''
+      })
+
+      // this.subResult()
+    },
+    removeDomain(index){
+      this.form.select.splice(index,1)
+    },
+    subResult(){
+    },
+    setTag(list){
+      // this.curTag.push(id)
+      this.form.tags = [...list]
+    }
+  }
 }
 </script>
 
@@ -149,13 +178,6 @@ export default {
     position: relative;
     .el-input__inner,.el-textarea__inner{
       width: 500px;
-    }
-    .p-draw__addbt{
-      // margin: 0 auto;
-      // position: absolute;
-      // transform: translate(-50%,-50%);
-      // top: 50%;
-      // right: 0;
     }
   }
   

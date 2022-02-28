@@ -7,3 +7,10 @@ export const createQ = (data)=>{
     url:'user/createQ'
   })
 }
+
+export const getTag = ()=>{
+  return request({
+    method:"GET",
+    url:'api/getTag'
+  })
+}

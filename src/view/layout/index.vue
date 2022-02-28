@@ -88,6 +88,11 @@ export default {
     },
     // 创建题目
     draw(){
+      if(!this.isLogin){
+        this.$message.info('未登录,1秒后自动跳转登录页面!')
+        setTimeout(()=>{this.login(1)},1000)
+        return false
+      }
       this.$router.push({ path: '/draw' })
       // console.log('创建题目');
     },

@@ -5,13 +5,13 @@
     电话：<input type="text" maxlength="11" v-model="phone"> -->
     <el-card class="box-card">
       <!-- 登录 -->
-      <div class="p-login__wrap" v-if="registOrLogin===1">
-        <el-form ref="form1" :model="form" label-width="120px">
+      <div class="p-login__wrap" v-show="registOrLogin===1">
+        <el-form ref="form1" :model="form1" label-width="120px">
           <el-form-item  prop="acount" :rules="[{ required: true, message: '用户名不能为空'}]">
-            <el-input :clearable='true' placeholder="用户名" v-model="form.acount"></el-input>
+            <el-input :clearable='true' placeholder="用户名" v-model="form1.acount"></el-input>
           </el-form-item>
           <el-form-item prop="password" :rules="[{ required: true, message: '密码不能为空'}]">
-            <el-input :clearable='true' placeholder="请输入密码" v-model="form.password" show-password></el-input>
+            <el-input :clearable='true' placeholder="请输入密码" v-model="form1.password" show-password></el-input>
             <!-- <el-input  v-model="input" show-password></el-input> -->
           </el-form-item>
           <el-button type="primary" size="medium" @keyup.enter="login" @click="login" :loading="loading">{{!loading?'登录':'登陆中...'}}</el-button>
@@ -20,19 +20,19 @@
       </div>
       <!-- ----------- -->
       <!-- 注册 -->
-      <div class="p-login__wrap" v-else>
-        <el-form ref="form2" :model="form" label-width="120px">
-          <el-form-item prop="acount" :rules="[{ required: true, message: '用户名不能为空'}]">
-            <el-input :clearable='true' placeholder="用户名" v-model="form.acount"></el-input>
+      <div class="p-login__wrap" v-show="registOrLogin===0">
+        <el-form ref="form2" :rules="rules2" :model="form2" label-width="120px">
+          <el-form-item prop="acount">
+            <el-input :clearable='true' placeholder="用户名" v-model="form2.acount"></el-input>
           </el-form-item>
-          <el-form-item prop="password" :rules="[{ required: true, message: '密码不能为空'}]">
-            <el-input :clearable='true' placeholder="设置密码" v-model="form.password" show-password></el-input>
+          <el-form-item prop="password">
+            <el-input :clearable='true' placeholder="设置密码" v-model="form2.password" show-password></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input :clearable='true' type="password" placeholder="确认密码" v-model="form.newPassword"></el-input>
+            <el-input :clearable='true' type="password" placeholder="确认密码" v-model="form2.newPassword"></el-input>
           </el-form-item>
-          <el-form-item prop="phone" :rules="[{ required: true, message: '手机号不能为空'}]">
-            <el-input oninput = "value=value.replace(/[^\d]/g,'')" :clearable='true' placeholder="请输入手机号码" v-model="form.phone"></el-input>
+          <el-form-item prop="phone">
+            <el-input oninput = "value=value.replace(/[^\d]/g,'')" maxlength="11" :clearable='true' placeholder="请输入手机号码" v-model="form2.phone"></el-input>
           </el-form-item>
           <el-button type="primary" size="medium" @click="regist" :loading="loading" >{{!loading?'注册':'注册中...'}}</el-button>
         </el-form>
@@ -51,14 +51,29 @@ export default {
 
   data() {
     return {
-      form:{
+      form1:{
+        acount: '',
+        password:'',
+      },
+      form2:{
         acount: '',
         password:'',
         newPassword:'',
         phone:''
       },
       registOrLogin:1,
-      loading:false
+      loading:false,
+      rules2:{
+        acount:[
+          { required: true, message: '用户名不能为空',trigger:'blur'},
+          { pattern:/^[\d\w]{6,}/ ,message:'用户名必须为6个英文与数字以上的组合',trigger:'blur'}
+        ],
+        phone:[
+          {required:true,message:'请填写号码',trigger:'blur'},
+          {pattern:/^1[34578]\d{9}$/,message:'请输入正确格式的手机号码'}
+        ],
+        password:[{ required: true, message: '密码不能为空',trigger:'blur'}]
+      }
     };
   },
   mounted(){
@@ -74,19 +89,19 @@ export default {
         if (valid) {
           this.loading = true
 
-          const aa = crypto.Encrypt(this.form.password)
+          const aa = crypto.Encrypt(this.form1.password)
          
-          const res = await api.login({userName:this.form.acount,userPassword:aa})
+          const res = await api.login({userName:this.form1.acount,userPassword:aa})
 
           console.log(res.token)
 
           if(res.code === "200"){
             this.$message.success(res.msg)
             setItem("USER_KEY",res.token)
-            setItem("USER_NAME",this.form.acount)
+            setItem("USER_NAME",this.form1.acount)
             // 设置登录属性 
             this.$store.commit('updateLogin')
-            this.$router.push({path:'/'})
+            this.$router.go(-1)
           }else{
             this.loading = false
             this.$message.error(res.msg)
@@ -110,12 +125,12 @@ export default {
         }
       });
       if(!flag){return false}
-      const form = this.form
+      const form = this.form2
       if(form.newPassword!==form.password){return this.$message.error('两次密码不一样')}
       this.loading = true
-      form.password = crypto.Encrypt(form.password)
+      const aa = crypto.Encrypt(form.password)
       // 连接接口
-      const res = await api.registUser({userName:form.acount,userPassword:form.password,userPhone:form.phone})
+      const res = await api.registUser({userName:form.acount,userPassword:aa,userPhone:form.phone})
       console.log('--------');
       console.log(res);
       console.log('--------');
@@ -125,7 +140,7 @@ export default {
       }
       this.loading = false
       this.$message.success(res.msg)
-      this.form = this.$options.data().form
+      this.form2 = this.$options.data().form2
       this.registOrLogin = 1
     },
 
@@ -141,7 +156,7 @@ export default {
 
     // 重置表单
     resetForm(index){
-      let str = ''
+      let str = ``
       if(index ===1){
         str = 'form1'
       }else{
