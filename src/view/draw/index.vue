@@ -39,7 +39,7 @@
         >
         </el-button>
       </el-form-item>
-      <el-form-item v-if="form.type" label="选项答案" :prop="form.type===2?'resList':'res'">
+      <el-form-item v-if="form.type" label="选项答案" :prop="form.type==='2'?'resList':'res'">
         <!-- 单选 -->
         <el-radio-group v-if="form.type==='0'||form.type==='1'" v-model="form.res">
           <el-radio :label="index" v-for="(item,index) in form.select" :key="index">{{'选项'+(index+1)}}</el-radio>
@@ -52,7 +52,11 @@
 
       </el-form-item>
       <el-form-item label="题目标签">
-        <tag :list="tagList" @setTags=setTag></tag>
+        <tag
+          :list="tagList"
+          @setTags=setTag
+          ref="tag"
+          ></tag>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
@@ -92,13 +96,13 @@ export default {
           { required: true, message: '请选择题目类型', trigger: 'change' }
         ],
         value:[
-            { required: true, message: '请选择题目类型', trigger: 'blur' }
+            { required: true, message: '请填写选项答案', trigger: 'blur' }
         ],
         resList:[
-            { required: true, message: '请选择题目类型', trigger: 'blur' }
+            { required: true, message: '输入正确的答案选项', trigger: 'blur' }
         ],
         res:[
-            { required: true, message: '请选择题目类型', trigger: 'blur' }
+            { required: true, message: '输入正确的答案选项', trigger: 'blur' }
         ],
       }
     }
@@ -111,6 +115,7 @@ export default {
   methods: {
     onSubmit() {
       this.$refs['form'].validate(valid=>{
+        console.log(valid);
         if(valid){
           this.draw() // 提交
         }else{
@@ -119,7 +124,10 @@ export default {
       })
     },
     reSet(){
-      this.$refs['form'].resetFields()
+      this.$nextTick(()=>{
+        this.$refs['form'].resetFields()
+        this.$refs['tag'].reSet()
+      })
     },
     async draw(){
       const _form = this.form
@@ -145,6 +153,7 @@ export default {
       }
       const res = await api.createQ(form)
       console.log(res);
+      this.reSet()
     },
     addSelect(){
       const form = this.form

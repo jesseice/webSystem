@@ -1,5 +1,7 @@
 import axios from 'axios'
 import store from '@/store'
+import router from '@/router'
+import { MessageBox } from 'element-ui'
 const request = axios.create({
   baseURL: 'http://127.0.0.1:3000/',
   timeout:10000
@@ -18,18 +20,26 @@ request.interceptors.request.use(function (config) {
 })
 
 request.interceptors.response.use(function (response) {
-  // 2xx 范围内的状态码都会触发该函数。
-  // 对响应数据做点什么
   // if (/^2\d{2}$/.test(response.data.code)){
   //   response.status = 200
   // }else if(/^4\d{2}/.test(response.data.code)){
   //   response.status = 400
   // }
   response = response.data
+  if(response.code === 1004){
+    // Message.error('未登录,自动跳转')
+    MessageBox.confirm('未登录，是否立即跳转登录页?', '提示', {
+      confirmButtonText: '是',
+      cancelButtonText: '稍后',
+      type: 'warning',
+      center: true
+    }).then(() => {
+      router.push('/login')
+    }).catch(() => {
+    })
+  }
   return response;
 }, function (error) {
-  // 超出 2xx 范围的状态码都会触发该函数。
-  // 对响应错误做点什么
   return Promise.reject(error);
 });
 

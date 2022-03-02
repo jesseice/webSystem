@@ -31,6 +31,9 @@ export default {
         this.tagIDs.splice(index,1)
       }
       this.$emit('setTags', this.tagIDs);
+    },
+    reSet(){
+      this.tagIDs = this.$options.data().tagIDs
     }
   }
 }
@@ -38,10 +41,18 @@ export default {
 
 <style lang="scss" scoped>
   .c-tag{
-    width: 100%;
+    width: 500px;
     display: flex;
-    justify-content: space-between;
+    column-gap: 33px;
+    row-gap:10px ;
     align-items: center;
     flex-wrap: wrap;
+    .el-tag--plain.el-tag--success,.el-tag--dark.el-tag--success{
+      width: 100px;
+      text-align: center;
+    }
+    .el-tag:hover{
+      cursor: pointer;
+    }
   }
 </style>

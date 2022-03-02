@@ -97,10 +97,10 @@ export default {
 
           if(res.code === "200"){
             this.$message.success(res.msg)
-            setItem("USER_KEY",res.token)
+            // setItem("USER_KEY",res.token)
             setItem("USER_NAME",this.form1.acount)
             // 设置登录属性 
-            this.$store.commit('updateLogin')
+            this.$store.commit('updateLogin',[1,res.token])
             this.$router.go(-1)
           }else{
             this.loading = false

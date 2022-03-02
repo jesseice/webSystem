@@ -89,11 +89,19 @@ export default {
     // 创建题目
     draw(){
       if(!this.isLogin){
-        this.$message.info('未登录,1秒后自动跳转登录页面!')
-        setTimeout(()=>{this.login(1)},1000)
-        return false
+         this.$confirm('未登录,是否立即跳转登录页?', '提示', {
+          confirmButtonText: '是',
+          cancelButtonText: '稍后',
+          type: 'warning',
+          center: true
+        }).then(() => {
+          this.login(1)
+        }).catch(() => {
+           this.$router.push({ path: '/draw' })
+        });
+      }else{
+        this.$router.push({ path: '/draw' })
       }
-      this.$router.push({ path: '/draw' })
       // console.log('创建题目');
     },
     // 个人题库

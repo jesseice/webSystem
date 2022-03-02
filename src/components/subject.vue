@@ -43,6 +43,7 @@ export default {
       center: true
     }).then(() => {
       this.$message.success('已退出考试状态!')
+      this.$store.commit('updateIsExam')
       next()
     }).catch(() => {
     });
@@ -62,7 +63,6 @@ export default {
     }else{
       console.log('获取出错');
     }
-    console.log(this.subject1)
   },
   beforeDestroy(){
     this.$nextTick(() => {
