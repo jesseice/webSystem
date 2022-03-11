@@ -16,13 +16,13 @@ const routes = [
         path:'/exam',
         name:'exam',
         component: () => import('@/view/exam'),
-        children:[
-          {
-            path:'radexam',
-            name:'radexam',
-            component: ()=> import('@/components/subject')
-          }
-        ]
+        // children:[
+        //   {
+        //     path:'radexam',
+        //     name:'radexam',
+        //     component: ()=> import('@/components/subject')
+        //   }
+        // ]
       },
       {
         path:'/draw',
@@ -35,6 +35,11 @@ const routes = [
         component: () => import('@/view/question')
       },
     ]
+  },
+  {
+    path:'/page_exam',
+    name:'page_exam',
+    component:()=> import('@/view/exam/exam')
   },
   {
     path: '/login',

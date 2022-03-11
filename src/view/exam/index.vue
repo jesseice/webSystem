@@ -89,7 +89,11 @@ export default {
       }).then(() => {
         this.$message.success('进入考试状态!')
         this.$store.commit('updateIsExam')
-        this.$router.push({name:'radexam',param:this.form})
+        let obj = []
+        this.form.num.forEach(val=>{
+          obj.push(val.sub_num)
+        })
+        this.$router.push({name:'page_exam',params:{data:obj}}) 
       }).catch(() => {
         console.log('取消退出');
       })

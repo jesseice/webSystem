@@ -19,7 +19,9 @@
       </el-menu-item>
     </el-menu>
     <div class="p-layout__content">
-      <router-view></router-view>
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
     </div>
     <personal-set></personal-set>
   </div>

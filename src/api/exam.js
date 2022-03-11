@@ -1,9 +1,10 @@
 import request from "../util/request";
 // 获取试题
-export const getSubject = ()=>{
+export const getSubject = data=>{
   return request({
-    method:'GET',
-    url:'/user/exam'
+    method:'POST',
+    url:'/user/exam',
+    data
   })
 }
 
