@@ -23,6 +23,7 @@ export default new Vuex.Store({
       setItem(USER_KEY,ctx.token)
     },
     updateIsExam(ctx){
+      // console.log('进入了')
       ctx.isExam = !ctx.isExam
       window.sessionStorage.setItem(IS_EXAM, JSON.stringify(ctx.isExam))
     }

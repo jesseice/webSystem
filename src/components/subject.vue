@@ -1,7 +1,8 @@
 <template>
   <div class="c-subject" id="ddd">
-    <div :style="{color:'#67C23A',textAlign:'center',margin:'20px 0 30px 0'}">前端测评随机试题考试</div>
+    <div :style="{color:'#67C23A',fontSize:'30px',textAlign:'center',margin:'20px 0 30px 0'}">前端测评随机试题考试</div>
     <div class="c-subject__item" v-for="(item,ind) in subject" :key="ind">
+      <span :id="`title${ind}`"></span>
       <div class="c-subject__item-title"><span>{{ind+1}}、</span>
         {{item.subject_title}}&nbsp;&nbsp;&nbsp;
         ({{(item.subject_type===0&&'单选题')||(item.subject_type===1&&'判断题')||(item.subject_type===2&&'多选题')}})
@@ -9,6 +10,8 @@
       <div class="c-subject__item-select" :style="{height:item.subject_select.length>3?'300px':'150px'}">
         <radio-select
           @setRes=setResult
+          @setSide=setSideNum
+          :ix="ind"
           :subject_id="item.subject_id"
           :subject_type="item.subject_type"
           :items="item.subject_select"
@@ -16,6 +19,8 @@
         ></radio-select>
         <multiple-select
           @setRes=setResult
+          @setSide=setSideNum
+          :ix="ind"
           :subject_id="item.subject_id"
           :subject_type="item.subject_type"
           :items="item.subject_select"
@@ -23,7 +28,6 @@
         ></multiple-select>
       </div>
     </div>
-      <el-button type="primary" @click="commit" round>提交試卷</el-button>
   </div>
 </template>
 
@@ -31,6 +35,7 @@
 import RadioSelect from '@/components/radioSelect.vue'
 import MultipleSelect from '@/components/multipleSelect.vue'
 import api from '@/api/index'
+import eventBus from '@/util/eventbus.js'
 export default {
   components:{
     RadioSelect,
@@ -42,47 +47,6 @@ export default {
       default:()=>[]
     }
   },
-  // beforeRouteEnter(to,from,next){
-  //   next(vm=>{
-  //     vm.num = to.params.data
-  //   })
-  // },
-  // beforeRouteLeave(to,from,next){
-  //   this.$confirm('确定退出考试?', '确认信息', {
-  //     confirmButtonText: '确认',
-  //     cancelButtonText: '误触了',
-  //     type: 'warning',
-  //     center: true
-  //   }).then(() => {
-  //     this.$message.success('已退出考试状态!')
-  //     this.$store.commit('updateIsExam')
-  //     next()
-  //   }).catch(() => {
-  //   })
-  // },
-  // async mounted(){
-  //   // this.fullScreen('ddd')
-  //   // 禁止复制
-  //   this.$nextTick(() => {
-  //     document.oncontextmenu = new Function("event.returnValue=false"); // 禁用右键
-  //     document.onselectstart = new Function("event.returnValue=false");  // 禁用选择
-  //   })
-  //   let res = await api.getSubject(this.num)
-  //   if(res.code === 200){
-  //     res.data.forEach(val=>{
-  //       val.subject_select = val.subject_select.split('&&')
-  //       this.subject.push(val)
-  //     })
-  //   }else{
-  //     console.log('获取出错');
-  //   }
-  // },
-  // beforeDestroy(){
-  //   this.$nextTick(() => {
-  //     document.oncontextmenu = new Function("event.returnValue=true"); // 启用右键
-  //     document.onselectstart = new Function("event.returnValue=true");  // 启用选择
-  //   })
-  // },
   data() {
     return {
       num:[], // 不同题目类的题目数量
@@ -93,32 +57,29 @@ export default {
       //   subject_title: '',
       //   subject_type: ''
       // },
-      subResult0:{},
+      subResult0:{}, // 'id':result
       subResult1:{},
       subResult2:{},
       // subResult:{
       //   subject_id:[],
       //   subject_result:[]
       // },
+      sideObj:{}
     };
   },
+  created(){
+    this.$nextTick(()=>{
+      this.subject.forEach((val,ind)=>{
+        this.sideObj[ind] = false
+      })
+      eventBus.$emit('setSideObj',this.sideObj)
+    })
+    eventBus.$on('commit',this.commit)
+  },
   methods:{
-    // 全屏
-    // fullScreen(id) {
-    //   let element = document.getElementById(id)
-    //   if (element.requestFullScreen)
-    //     return element.requestFullScreen()
-    //   if (element.webkitRequestFullScreen)
-    //     return element.webkitRequestFullScreen()
-    //   if (element.mozRequestFullScreen)
-    //     return element.mozRequestFullScreen()
-    //   if (element.msRequestFullScreen)
-    //     return element.msRequestFullScreen()
-    //   if (element.oRequestFullScreen)
-    //     return element.oRequestFullScreen()
-    // },
     setResult(id,result,type){
       this[`subResult${type}`][id] = result
+      
     },
     async commit(){
       let subRes = {
@@ -128,6 +89,12 @@ export default {
       }
       const res = await api.commitResult(subRes)
       console.log(res);
+    },
+    setSideNum(ind,bool){
+      if (this.sideObj[ind] === bool) { return false}
+      this.$set(this.sideObj,ind,bool)
+      // 改变题卡 卡片选中状态
+      eventBus.$emit('setSideObj',this.sideObj)
     }
   }
 }
@@ -138,11 +105,9 @@ div::-webkit-scrollbar {
   width: 0;
 }
 .c-subject{
-  overflow: scroll;
   background-color: #fff;
   min-width: 475px;
   max-width: 800px;
-  margin: 0 auto;
   padding: 20px 50px;
   .c-subject__item{
     .c-subject__item-title{

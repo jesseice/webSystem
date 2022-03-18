@@ -17,6 +17,10 @@ export default {
    * items 为单选题或者判断题的 选项内容对象（当前这道题的全部选项对象集合）
    */
   props:{
+    ix:{
+      type:Number,
+      default:0
+    },
     items:{
       type:Array,
       default:()=>[]
@@ -52,7 +56,8 @@ export default {
         }
       }
       const str = this.subject_result.join('&&')
-      this.$emit('setRes',this.subject_id,str,this.subject_type) 
+      this.$emit('setRes',this.subject_id,str,this.subject_type)
+      this.$emit('setSide',this.ix,str!==''?true:false)
       this.$forceUpdate()
     }
   }

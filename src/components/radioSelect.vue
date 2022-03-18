@@ -13,6 +13,10 @@ export default {
    * items 为单选题或者判断题的 选项内容对象（当前这道题的全部选项对象集合）
    */
   props:{
+    ix:{
+      type:Number,
+      default:0
+    },
     items:{
       type:Array,
       default:()=>[]
@@ -35,6 +39,7 @@ export default {
     select(index){
       this.currentIndex = index
       this.$emit('setRes',this.subject_id,`${index}`,this.subject_type)
+      this.$emit('setSide',this.ix,true)
     }
   }
 }

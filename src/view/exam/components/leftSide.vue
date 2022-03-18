@@ -1,22 +1,123 @@
 <template>
   <div class="c-l-side">
-    left 题卡
+    <div
+      class="c-l-side__content"
+      :style="{top:60+topH+'px'}"
+    >
+      <div style="text-align:center;margin-bottom:20px; color: #409EFF;">题卡</div>
+      <el-divider></el-divider>
+      <div class="c-l-side__qc">
+        <div class="c-l-side__num"
+          v-for="(item,ind) in obj" :key="ind"
+        >
+          <a href="javascript:;" @click="goAnchor(`#title${ind}`)">
+            <el-button :type="!sideObj[ind]? 'plain':'primary'" size="small">{{ ind+1 }}</el-button>
+          </a>
+        </div>
+      </div>
+      <!-- <el-divider></el-divider> -->
+      <div class="c-l-side__bt__wrap">
+        <el-button type="primary" @click="commit" round>提交試卷</el-button>
+        <el-button type="primary" @click="examOut" round>退出考试</el-button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import eventBus from '@/util/eventbus.js'
 export default {
-
+  props:{
+    obj:{
+      type:Array,
+      default:()=>[]
+    }
+  },
+  data() {
+    return {
+      topH: 0,
+      timer:null,
+      sideObj:{}
+    };
+  },
+  created(){
+    eventBus.$on('setSideObj',this.setSideObj)
+  },
+  mounted(){
+    window.addEventListener('scroll', this.handleScroll)
+  },
+  methods:{
+    handleScroll(){
+      this.topH = document.documentElement.scrollTop || document.body.scrollTop
+    },
+    goAnchor(id){
+      document.querySelector(id).scrollIntoView({
+        behavior:"smooth"
+      })
+    },
+    setSideObj(obj){
+      this.sideObj = obj
+    },
+    commit(){
+      this.$confirm('提交试卷?', '确认信息', {
+        confirmButtonText: '提交',
+        cancelButtonText: '继续考试',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        this.$message.success('提交成功!')
+        eventBus.$emit('commit')
+        // this.$store.commit('updateIsExam')
+        // this.$router.replace('/')
+      }).catch((err) => {
+        console.log(err)
+      })
+    },
+    examOut(){
+      this.$confirm('退出考试,一切作答无效,确定退出考试?', '确认信息', {
+        confirmButtonText: '退出考试',
+        cancelButtonText: '继续考试',
+        type: 'warning',
+        center: true
+      }).then(() => {
+        this.$message.success('已退出考试!')
+        this.$store.commit('updateIsExam')
+        this.$router.replace('/')
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 .c-l-side{
-  position: fixed;
-  min-width: 320px;
-  min-height: 100px;
-  top: 30px;
-  left: 0;
-  background-color: #fff;
+  flex-grow: .5;
+  position: relative;
+  .c-l-side__content{
+    width: 285px;
+    min-height: 300px;
+    padding: 20px 15px;
+    box-sizing: border-box;
+    background-color: #fff;
+    position: absolute;
+    right: 20px;
+    .c-l-side__qc{
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 10px;
+      row-gap: 10px;
+      justify-content: space-between;
+    }
+    .c-l-side__bt__wrap{
+      position: absolute;
+      width: 255px;
+      bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
 }
 </style>

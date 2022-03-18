@@ -36,7 +36,6 @@
 </template>
 
 <script>
-// import { removeItem } from '@/util/storage'
 import eventBus from '@/util/eventbus'
 export default {
   data() {
@@ -75,7 +74,6 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$message.success('退出成功!')
-        // removeItem('USER_KEY')
         this.$store.commit('updateLogin',[0,''])
         eventBus.$emit('ctrDrawer')
       }).catch(() => {
