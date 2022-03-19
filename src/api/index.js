@@ -1,6 +1,6 @@
 import { registUser } from './regist';
 import { login } from './login'
-import { getSubject, commitResult } from './exam'
+import { getSubject, commitResult, getSubNum } from './exam'
 import { createQ, getTag } from './draw'
 
 export default {
@@ -8,6 +8,7 @@ export default {
   login,
   getSubject,
   commitResult,
+  getSubNum,
   createQ,
   getTag
 }

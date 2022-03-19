@@ -21,21 +21,11 @@ export default {
     RSide,
     LSide,
   },
-  // beforeRouteLeave(to,from,next){
-  //   // this.$confirm('确定退出考试?', '确认信息', {
-  //   //   confirmButtonText: '确认',
-  //   //   cancelButtonText: '误触了',
-  //   //   type: 'warning',
-  //   //   center: true
-  //   // }).then(() => {
-  //   //   this.$message.success('已退出考试状态!')
-  //   //   this.$store.commit('updateIsExam')
-  //   //   next()
-  //   // }).catch(() => {
-  //   // })
-  //   this.$store.commit('updateIsExam')
-  //   next()
-  // },
+  beforeRouteEnter(to, from, next) {
+    next(vm=>{
+        vm.num = to.params.data
+    })
+  },
   async mounted(){
     // 禁止复制
     this.$nextTick(() => {
@@ -59,7 +49,8 @@ export default {
   },
   data() {
     return {
-      subject: []
+      subject: [],
+      num: null
     }
   },
   methods:{

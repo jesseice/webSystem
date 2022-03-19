@@ -16,3 +16,11 @@ export const commitResult = data=>{
     data
   })
 }
+
+// 获取不同题目数量
+export const getSubNum = ()=>{
+  return request({
+    method:'GET',
+    url:'/api/getSubNum'
+  })
+}

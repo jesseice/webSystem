@@ -39,7 +39,8 @@
 </template>
 
 <script>
-// import Subject from '@/components/subject.vue'
+import api from '@/api'
+// import eventBus from '@/util/eventbus.js'
 export default {
   components:{
     // Subject
@@ -49,7 +50,7 @@ export default {
       value:false,
       form:{
         num:[
-          { 
+          {
             name:'单选题',
             sub_num:25,
             sub_max:100
@@ -76,13 +77,16 @@ export default {
       return !this.$store.state.isExam
     }
   },
-  created(){
-    
+  async created(){
+    const res = await api.getSubNum()
+    for(let k in res.data){
+      this.form.num[k].sub_max = res.data[k]
+    }
   },
   methods:{
     fn(){
       if(!this.$store.getters.isLogin){return this.$message.error('请登录')}
-      this.$confirm('是否进入全屏考试状态', '小提示', {
+      this.$confirm('是否进入考试状态', '小提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -93,7 +97,7 @@ export default {
         this.form.num.forEach(val=>{
           obj.push(val.sub_num)
         })
-        this.$router.push({name:'page_exam',params:{data:obj}}) 
+        this.$router.push({name:'page_exam',params:{data:obj}})
       }).catch(() => {
         console.log('取消退出');
       })

@@ -50,7 +50,7 @@ export default {
   created(){
     // 防止刷新丢失菜单选中项的状态
     this.activeIndex = JSON.parse(window.sessionStorage.getItem("currentIndex"))  || '1'
-    console.log(this.isLogin)
+    // this.handleSelect(this.activeIndex)
   },
   computed:{
     isLogin(){
@@ -126,6 +126,8 @@ export default {
 <style lang="scss" scoped>
 .p-layout{
   .el-menu{
+    // 抽屉为2002
+    z-index: 2001;
     position: fixed;
     top: 0;
     box-sizing: border-box;
