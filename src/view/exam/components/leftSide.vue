@@ -16,9 +16,12 @@
         </div>
       </div>
       <!-- <el-divider></el-divider> -->
-      <div class="c-l-side__bt__wrap">
+      <div class="c-l-side__bt__wrap" v-if="isShow">
         <el-button type="primary" @click="commit" round>提交試卷</el-button>
         <el-button type="primary" @click="examOut" round>退出考试</el-button>
+      </div>
+      <div class="c-l-side__bt__wrap" v-else>
+        <el-button type="primary" @click="out" round>关闭试卷</el-button>
       </div>
     </div>
   </div>
@@ -46,6 +49,11 @@ export default {
   mounted(){
     window.addEventListener('scroll', this.handleScroll)
   },
+  computed:{
+    isShow(){
+      return this.$store.state.isExam
+    }
+  },
   methods:{
     handleScroll(){
       this.topH = document.documentElement.scrollTop || document.body.scrollTop
@@ -67,8 +75,6 @@ export default {
       }).then(() => {
         this.$message.success('提交成功!')
         eventBus.$emit('commit')
-        // this.$store.commit('updateIsExam')
-        // this.$router.replace('/')
       }).catch((err) => {
         console.log(err)
       })
@@ -81,11 +87,14 @@ export default {
         center: true
       }).then(() => {
         this.$message.success('已退出考试!')
-        this.$store.commit('updateIsExam')
+        this.$store.commit('updateIsExam',false)
         this.$router.replace('/')
       }).catch((err) => {
         console.log(err)
       })
+    },
+    out(){
+      this.$router.replace('/')
     }
   }
 }
@@ -107,9 +116,9 @@ export default {
       width: 100%;
       display: flex;
       flex-wrap: wrap;
-      column-gap: 10px;
+      column-gap: 15px;
       row-gap: 10px;
-      justify-content: space-between;
+      // justify-content: space-between;
     }
     .c-l-side__bt__wrap{
       position: absolute;

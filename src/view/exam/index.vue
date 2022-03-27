@@ -50,7 +50,7 @@ export default {
       value:false,
       form:{
         num:[
-          {
+          { 
             name:'单选题',
             sub_num:25,
             sub_max:100
@@ -92,7 +92,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$message.success('进入考试状态!')
-        this.$store.commit('updateIsExam')
+        this.$store.commit('updateIsExam',true)
         let obj = []
         this.form.num.forEach(val=>{
           obj.push(val.sub_num)

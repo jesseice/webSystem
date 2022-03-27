@@ -10,7 +10,8 @@ const IS_EXAM = 'IS_EXAM'
 export default new Vuex.Store({
   state:{
     token: getItem(USER_KEY)|| '',
-    isExam: JSON.parse(window.sessionStorage.getItem(IS_EXAM))|| false
+    isExam: JSON.parse(window.sessionStorage.getItem(IS_EXAM))|| false,
+    subject:{}
   },
   mutations:{
     // 更新登录状态
@@ -22,10 +23,13 @@ export default new Vuex.Store({
       }
       setItem(USER_KEY,ctx.token)
     },
-    updateIsExam(ctx){
-      // console.log('进入了')
-      ctx.isExam = !ctx.isExam
+    updateIsExam(ctx,bool){
+      console.log('进入了')
+      ctx.isExam = bool
       window.sessionStorage.setItem(IS_EXAM, JSON.stringify(ctx.isExam))
+    },
+    fillSubject(ctx,obj){
+      ctx.subject = obj
     }
   },
   actions:{

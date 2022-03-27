@@ -5,29 +5,29 @@
       :style="{top:60+topH+'px'}"
     >
       <div style="text-align:center">
-        <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+        <el-avatar :src="user.user_avatar"></el-avatar>
       </div>
       <el-divider></el-divider>
       <el-descriptions title="用户信息">
-        <el-descriptions-item label="用户名">{{ userName }}</el-descriptions-item>
+        <el-descriptions-item label="用户名">{{ user.user_name }}</el-descriptions-item>
       </el-descriptions>
     </div>
   </div>
 </template>
 
 <script>
-import { getItem } from "@/util/storage"
+const USER_INFO = 'USER_INFO'
 export default {
   data() {
     return {
       topH: 0,
       timer:null,
-      userName:'Not found'
+      user:{}
     };
   },
   mounted(){
     window.addEventListener('scroll', this.handleScroll)
-    this.userName = getItem('USER_NAME')
+    this.user = JSON.parse(window.sessionStorage.getItem(USER_INFO))
   },
   methods:{
     handleScroll(){

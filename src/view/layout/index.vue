@@ -14,8 +14,8 @@
       <el-menu-item index="4">个人题库</el-menu-item>
       <el-menu-item class="p-layout__login" @click="login(1)" v-if="!isLogin">登录 | 注册</el-menu-item>
       <el-menu-item class="p-layout__login" @click="login(2)" v-else>
-        <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
-        {{user_name}}
+        <el-avatar :src="user.user_avatar"></el-avatar>
+        {{user.user_name}}
       </el-menu-item>
     </el-menu>
     <div class="p-layout__content">
@@ -30,7 +30,9 @@
 <script>
 import eventBus from '@/util/eventbus'
 import PersonalSet from "@/components/personalSet.vue"
-import { getItem } from "@/util/storage"
+// import { getItem } from "@/util/storage"
+import api from '@/api'
+const USER_INFO = 'USER_INFO'
 export default {
   components:{
     PersonalSet
@@ -39,17 +41,21 @@ export default {
     return {
       activeIndex:'1',
       currentIndex:'1',
-      user_name:'小a程序猿'
+      user:{}
     };
   },
-  beforeRouteEnter(to, from, next){ 
-    next(vm=>{
-      vm.user_name = getItem('USER_NAME')
-    })
-  },
-  created(){
+  // beforeRouteEnter(to, from, next){ 
+  //   next(vm=>{
+  //     vm.user_name = getItem('USER_NAME')
+  //   })
+  // },
+  async created(){
     // 防止刷新丢失菜单选中项的状态
     this.activeIndex = JSON.parse(window.sessionStorage.getItem("currentIndex"))  || '1'
+
+    const user =await api.getUserInfo()
+    this.user = user.data[0]
+    window.sessionStorage.setItem(USER_INFO,JSON.stringify(this.user))
     // this.handleSelect(this.activeIndex)
   },
   computed:{

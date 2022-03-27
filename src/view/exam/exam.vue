@@ -4,9 +4,11 @@
       :obj="subject"
     ></l-side>
     <subject
+      ref="sbj"
       :subject="subject"
     ></subject>
     <r-side></r-side>
+    <Mark></Mark>
   </div>
 </template>
 
@@ -14,12 +16,14 @@
 import Subject from '@/components/subject'
 import LSide from '@/view/exam/components/leftSide'
 import RSide from '@/view/exam/components/rightSide'
+import Mark from '@/view/exam/components/mark'
 import api from '@/api/index'
 export default {
   components:{
     Subject,
     RSide,
     LSide,
+    Mark
   },
   beforeRouteEnter(to, from, next) {
     next(vm=>{
@@ -42,6 +46,9 @@ export default {
       res.data.forEach(val=>{
         val.subject_select = val.subject_select.split('&&')
         this.subject.push(val)
+      })
+      this.$nextTick(()=>{
+        this.$refs['sbj'].resultInit(this.subject)
       })
     }else{
       console.log('获取出错');
@@ -73,6 +80,7 @@ export default {
   // position: relative;
   display: flex;
   width: 100%;
+  min-height: 100vh;
   background-color: #F2F6FC;
 }
 </style>

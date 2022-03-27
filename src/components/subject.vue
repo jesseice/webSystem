@@ -47,7 +47,7 @@ export default {
       default:()=>[]
     }
   },
-  data() {
+  data() {  
     return {
       num:[], // 不同题目类的题目数量
       // subject:[],
@@ -76,10 +76,12 @@ export default {
     })
     eventBus.$on('commit',this.commit)
   },
+  mounted(){
+    //  props是通过ajax获取的动态值不能在created  mounted 
+  },
   methods:{
     setResult(id,result,type){
       this[`subResult${type}`][id] = result
-      
     },
     async commit(){
       let subRes = {
@@ -88,13 +90,29 @@ export default {
         '2':this.subResult2,
       }
       const res = await api.commitResult(subRes)
-      console.log(res);
+      eventBus.$emit('isShow',res)
+      this.$store.commit('updateIsExam',false)
+      console.log(1);
     },
     setSideNum(ind,bool){
-      if (this.sideObj[ind] === bool) { return false}
+      if (this.sideObj[ind] === bool){ return false}
       this.$set(this.sideObj,ind,bool)
       // 改变题卡 卡片选中状态
       eventBus.$emit('setSideObj',this.sideObj)
+    },
+    // 答案初始化
+    resultInit(subject){
+      subject.forEach(val=>{
+        // this[`subjectResult${val.subject_type}`][val.subject_id] = ''
+        switch(val.subject_type){
+          case 0:this.subResult0[val.subject_id] = ''
+            break;
+          case 1:this.subResult1[val.subject_id] = ''
+            break;
+          case 2:this.subResult2[val.subject_id] = ''
+            break;
+        }
+      })
     }
   }
 }

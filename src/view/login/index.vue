@@ -1,8 +1,5 @@
 <template>
   <div class="p-login">
-    <!-- 账号：<input type="text" v-model="acount" >
-    密码：<input type="password" v-model="password" >
-    电话：<input type="text" maxlength="11" v-model="phone"> -->
     <el-card class="box-card">
       <!-- 登录 -->
       <div class="p-login__wrap" v-show="registOrLogin===1">
