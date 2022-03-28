@@ -131,7 +131,7 @@ export default {
       console.log('--------');
       console.log(res);
       console.log('--------');
-      if(res.errno){
+      if(res.code === 400){
         this.loading = false
         return this.$message.error('注册失败,该账号名已被注册!')
       }
