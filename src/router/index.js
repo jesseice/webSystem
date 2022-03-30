@@ -47,6 +47,11 @@ const routes = [
     component: () => import('@/view/login')
   },
   {
+    path:'/news',
+    name:'news',
+    component: () => import('@/view/news')
+  },
+  {
     path: '*',
     component: () => import('@/view/error')
   },

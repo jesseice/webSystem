@@ -57,7 +57,7 @@ export default {
           console.log(1);
         break;
         case '2':
-          console.log(2);
+          this.goNews()
         break;
         case '3':
           console.log(3);
@@ -66,6 +66,9 @@ export default {
           this.outLogin()
         break;
       }
+    },
+    goNews(){
+      this.$router.push('/news')
     },
     outLogin(){
       this.$confirm('是否退出账号', '小提示', {

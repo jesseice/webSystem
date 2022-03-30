@@ -44,11 +44,6 @@ export default {
       user:{}
     };
   },
-  // beforeRouteEnter(to, from, next){ 
-  //   next(vm=>{
-  //     vm.user_name = getItem('USER_NAME')
-  //   })
-  // },
   async created(){
     // 防止刷新丢失菜单选中项的状态
     this.activeIndex = JSON.parse(window.sessionStorage.getItem("currentIndex"))  || '1'

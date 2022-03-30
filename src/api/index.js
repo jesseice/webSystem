@@ -2,7 +2,7 @@ import { registUser } from './regist';
 import { login } from './login'
 import { getSubject, commitResult, getSubNum } from './exam'
 import { createQ, getTag } from './draw'
-import { getUserInfo } from './user'
+import { getUserInfo, getFriendList } from './user'
 
 export default {
   registUser, // 注册
@@ -12,5 +12,6 @@ export default {
   getSubNum,
   createQ,
   getTag,
-  getUserInfo
+  getUserInfo,
+  getFriendList
 }
