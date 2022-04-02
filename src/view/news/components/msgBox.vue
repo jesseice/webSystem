@@ -82,7 +82,7 @@ export default {
       right: -11px;
       top: 11px;
       border: 6px solid transparent;
-      border-left-color: #fcefe8;;
+      border-left-color: #fcefe8;
     }
   }
   .c-msg__box--avatar{
@@ -96,7 +96,7 @@ export default {
     box-sizing: border-box;
     padding: 5px;
     font-size: 15px;
-    background: #fcefe8;;
+    background: #fcefe8;
     border-radius: 6px;
     word-break: break-all;
   }

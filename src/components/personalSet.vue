@@ -15,18 +15,14 @@
         text-color="#fff"
         active-text-color="#ffd04b">
         <el-menu-item index="1">
-          <i class="el-icon-location"></i>
-          <span slot="title">导航一</span>
+          <i class="el-icon-setting"></i>
+          <span slot="title">账号设置</span>
         </el-menu-item>
         <el-menu-item index="2">
           <i class="el-icon-chat-dot-round"></i>
           <span slot="title">消息中心</span>
         </el-menu-item>
         <el-menu-item index="3">
-          <i class="el-icon-setting"></i>
-          <span slot="title">账号设置</span>
-        </el-menu-item>
-        <el-menu-item index="4">
           <i class="el-icon-switch-button"></i>
           <span slot="title">退出登录</span>
         </el-menu-item>
@@ -51,7 +47,7 @@ export default {
   },
   methods:{
     handleSelect(index){
-      console.log(index);
+      // console.log(index);
       switch(index){
         case '1':
           console.log(1);
@@ -60,9 +56,6 @@ export default {
           this.goNews()
         break;
         case '3':
-          console.log(3);
-        break;
-        case '4':
           this.outLogin()
         break;
       }
@@ -76,6 +69,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        // this.$socket.emit('disconnect')
         this.$message.success('退出成功!')
         this.$store.commit('updateLogin',[0,''])
         eventBus.$emit('ctrDrawer')

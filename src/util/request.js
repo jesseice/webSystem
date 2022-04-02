@@ -8,18 +8,18 @@ const request = axios.create({
 })
 
 
-request.interceptors.request.use(function (config) {
+request.interceptors.request.use( config => {
 
   const { token } = store.state
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
   return config
-}, function (error) {
+}, error => {
   return Promise.reject(error)
 })
 
-request.interceptors.response.use(function (response) {
+request.interceptors.response.use( response => {
   // if (/^2\d{2}$/.test(response.data.code)){
   //   response.status = 200
   // }else if(/^4\d{2}/.test(response.data.code)){
@@ -39,7 +39,7 @@ request.interceptors.response.use(function (response) {
     })
   }
   return response;
-}, function (error) {
+},  error => {
   return Promise.reject(error);
 });
 

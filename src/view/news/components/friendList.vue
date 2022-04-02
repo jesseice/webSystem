@@ -31,7 +31,7 @@ export default {
   },
   methods:{
     click(){
-      console.log(this.friInfo);
+      // console.log(this.friInfo);
       this.$emit('atFriend',this.friInfo,this.index)
     }
   }

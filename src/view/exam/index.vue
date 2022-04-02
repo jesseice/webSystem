@@ -32,7 +32,8 @@
         </el-form>
       </div>
       <el-divider></el-divider>
-      <button @click="fn"> 点击获取考试试卷</button>
+      <!-- <button @click="fn"> 点击获取考试试卷</button> -->
+      <el-button @click="fn" type="primary">开始考试</el-button>
     </div>
     <router-view></router-view>
   </div>

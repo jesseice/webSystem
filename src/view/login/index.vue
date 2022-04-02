@@ -37,6 +37,12 @@
       </div>
       <!-- --------------- -->
     </el-card>
+    <vue-particles
+      color="#00cc00"
+      linesColor="0c5da5"
+      :moveSpeed="4"
+      hoverMode="grab"
+      ></vue-particles>
   </div>
 </template>
 
@@ -175,9 +181,20 @@ export default {
 
 <style lang="scss">
 .p-login{
+  // background: linear-gradient(-180deg, #dcf2e6 0%, #ffffff 100%);
+  background-image: url('~@/assets/img/login_bg.png');
+  background-position: center 0;
+  background-size: cover;
+  background-repeat: no-repeat;
   height:100vh;
+  overflow: hidden;
   position: relative;
   .box-card{
+    // background: linear-gradient(-180deg, #dcf2e6 0%, #ffffff 100%);
+    background-image: url('~@/assets/img/login_bg.png');
+    background-position: center 0;
+    background-size: cover;
+    background-repeat: no-repeat;
     position: absolute;
     transform: translate(-50%,-50%);
     left: 50%;
