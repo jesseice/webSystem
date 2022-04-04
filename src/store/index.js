@@ -11,7 +11,9 @@ export default new Vuex.Store({
   state:{
     token: getItem(USER_KEY)|| '',
     isExam: JSON.parse(window.sessionStorage.getItem(IS_EXAM))|| false,
-    subject:{}
+    userInfo: null,
+    subject:{},
+    hasMsg:false
   },
   mutations:{
     // 更新登录状态
@@ -30,6 +32,12 @@ export default new Vuex.Store({
     },
     fillSubject(ctx,obj){
       ctx.subject = obj
+    },
+    setUserInfo(ctx,data){
+      ctx.userInfo = data
+    },
+    setHasMsg(ctx,bool){
+      ctx.hasMsg = bool
     }
   },
   actions:{

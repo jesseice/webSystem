@@ -92,7 +92,6 @@ export default {
         this.atFriend(this.friend_list[0],0)
         // 获取聊天记录
         let msg_obj = getItem(this.my_name+chatKey)
-        console.log('这是聊天记录对象:',msg_obj)
         if(msg_obj&&Object.values(msg_obj).length>0){
 
           this.msgs = {...msg_obj}
@@ -125,6 +124,8 @@ export default {
 
     // 获取是否有离线消息
     this.$socket.emit('check leave msg',this.my_name)
+    // 告诉服务器我在聊天页面了
+    this.$socket.emit('is in chat page',this.my_name,true)
 
     // 监听私聊信息
     this.$socket.on('private message',(fri_socketid,msg,authorName)=>{
@@ -132,11 +133,10 @@ export default {
       // 此处的authorName不要改成this.this.cur_fri_name
       this.msgs[authorName].push(['left',msg])
       this.$forceUpdate()
-      // this.scrollBottom()
+      this.scrollBottom()
     })
   },
   mounted(){
-    // this.scrollBottom()
     // 监听浏览器刷新，关闭事件
     // 页面加载时只执行 onload 事件。
     // 页面关闭时，先 onbeforeunload 事件，再 onunload 事件。
@@ -175,7 +175,7 @@ export default {
       this.$forceUpdate()
       // this.$set(this.msgs,this.cur_fri_name,[['right',txt]])
       // this.$set(this.msgs[this.cur_fri_name],this.msgs[this.cur_fri_name].length,[['right',txt]])
-      // this.scrollBottom()
+      this.scrollBottom()
       this.txt = this.$options.data().txt
     },
     // 点击好友列表某一项
@@ -187,11 +187,14 @@ export default {
       this.curIndex = curIndex
       this.friend_title = friend.friend_name
     },
+    // 使最新信息在一直处于聊天框底部
     scrollBottom(){
-      this.$refs['msgBox'].scrollTo({
-        top:this.$refs['msgBox'].scrollHeight,
-        behavior:'smooth'
-      })
+     this.$nextTick(()=>{
+        this.$refs['msgBox'].scrollTo({
+          top:this.$refs['msgBox'].scrollHeight,
+          behavior:'smooth'
+        })
+     })
     },
     // 回主页
     goHome(){
@@ -203,6 +206,7 @@ export default {
     },
     setChatInfo(cur_user_name){
       setItem(cur_user_name+chatKey,this.msgs)
+      this.$socket.emit('is in chat page',this.my_name,false)
     }
   }
 }

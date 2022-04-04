@@ -13,7 +13,7 @@
       <el-menu-item index="3">创建题目</el-menu-item>
       <el-menu-item index="4">个人题库</el-menu-item>
       <el-menu-item class="p-layout__login" @click="login(1)" v-if="!isLogin">登录 | 注册</el-menu-item>
-      <el-menu-item class="p-layout__login" @click="login(2)" v-else>
+      <el-menu-item class="p-layout__login my__badge" @click="login(2)" v-else>
         <el-avatar :src="user.user_avatar"></el-avatar>
         {{user.user_name}}
       </el-menu-item>
@@ -51,11 +51,16 @@ export default {
     const user =await api.getUserInfo()
     this.user = user.data[0]
     window.sessionStorage.setItem(USER_INFO,JSON.stringify(this.user))
+    // 保存给APP.vue用
+    this.$store.commit('setUserInfo',this.user)
     // this.handleSelect(this.activeIndex)
   },
   computed:{
     isLogin(){
       return this.$store.getters.isLogin
+    },
+    hasMsg(){
+      return this.$store.state.hasMsg
     }
   },
   methods:{
