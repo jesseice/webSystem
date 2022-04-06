@@ -21,7 +21,7 @@
         </el-menu-item>
         <el-menu-item index="2">
           <i class="el-icon-chat-dot-round"></i>
-          <span class="my__badge" slot="title">消息中心</span>
+          <span :class="{'my__badge':hasMsg}" slot="title">消息中心</span>
         </el-menu-item>
         <el-menu-item index="3">
           <i class="el-icon-switch-button"></i>
@@ -35,6 +35,11 @@
 <script>
 import eventBus from '@/util/eventbus'
 export default {
+  computed:{
+    hasMsg(){
+      return this.$store.state.hasMsg
+    }
+  },
   data() {
     return {
       drawer:false,
@@ -70,7 +75,8 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // this.$socket.emit('disconnect')
+        let a = JSON.parse(window.sessionStorage.getItem('USER_INFO'))
+        this.$socket.emit('out login',a.user_name)
         this.$message.success('退出成功!')
         this.$store.commit('updateLogin',[0,''])
         eventBus.$emit('ctrDrawer')

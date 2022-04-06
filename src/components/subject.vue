@@ -6,6 +6,11 @@
       <div class="c-subject__item-title"><span>{{ind+1}}、</span>
         {{item.subject_title}}&nbsp;&nbsp;&nbsp;
         ({{(item.subject_type===0&&'单选题')||(item.subject_type===1&&'判断题')||(item.subject_type===2&&'多选题')}})
+        <collect-topic
+          :sbj_id="item.subject_id"
+          :sbj_type="item.subject_type"
+          :sbj_title="item.subject_title"
+        ></collect-topic>
       </div>
       <div class="c-subject__item-select" :style="{height:item.subject_select.length>3?'300px':'150px'}">
         <radio-select
@@ -34,12 +39,14 @@
 <script>
 import RadioSelect from '@/components/radioSelect.vue'
 import MultipleSelect from '@/components/multipleSelect.vue'
+import CollectTopic from '@/components/collect'
 import api from '@/api/index'
 import eventBus from '@/util/eventbus.js'
 export default {
   components:{
     RadioSelect,
-    MultipleSelect
+    MultipleSelect,
+    CollectTopic
   },
   props:{
     subject:{
@@ -92,7 +99,6 @@ export default {
       const res = await api.commitResult(subRes)
       eventBus.$emit('isShow',res)
       this.$store.commit('updateIsExam',false)
-      console.log(1);
     },
     setSideNum(ind,bool){
       if (this.sideObj[ind] === bool){ return false}
@@ -129,6 +135,7 @@ div::-webkit-scrollbar {
   padding: 20px 50px;
   .c-subject__item{
     .c-subject__item-title{
+      position: relative;
       margin: 0 auto;
       min-width: 475px;
       max-width: 800px;

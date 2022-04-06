@@ -11,6 +11,12 @@ export default {
       return this.$store.state.userInfo
     }
   },
+  created(){
+    // 监听是否有消息
+    this.$socket.on('is has msg',bool=>{
+      this.$store.commit('setHasMsg',bool)
+    })
+  },
   watch:{
     userInfo:{
       immediate:true,

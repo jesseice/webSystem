@@ -14,6 +14,7 @@
           :friInfo="item"
           :index="index"
           :curIndex="curIndex"
+          :whoSendMsgs="whoSendMsgs"
           @atFriend = atFriend
           ></friend-list>
         </div>
@@ -117,6 +118,10 @@ export default {
     // 监听离线消息
     this.$socket.on('check leave msg',(authorName,msg)=>{
       console.log(`收到${authorName}发的消息：`,msg)
+
+      this.whoSendMsgs.set(authorName,true)
+      
+
       this.$nextTick(()=>{
         this.msgs[authorName].push(['left',msg])
       })
@@ -130,6 +135,9 @@ export default {
     // 监听私聊信息
     this.$socket.on('private message',(fri_socketid,msg,authorName)=>{
       console.log('接收到的信息：',msg,'来自',authorName)
+
+      this.whoSendMsgs.set(authorName,true)
+
       // 此处的authorName不要改成this.this.cur_fri_name
       this.msgs[authorName].push(['left',msg])
       this.$forceUpdate()
@@ -159,7 +167,8 @@ export default {
       my_avatar:JSON.parse(window.sessionStorage.getItem('USER_INFO')).user_avatar||'',
       my_name:JSON.parse(window.sessionStorage.getItem('USER_INFO')).user_name||'',
       // msg:[], // fri_name:[['left','在吗'],['right','在啊,怎么了']],
-      msgs:{}
+      msgs:{}, // {fri_name:[['left','在吗'],['right','在啊,怎么了']],fri_name:[['left','在吗'],['right','在啊,怎么了']]}
+      whoSendMsgs:new Map() // 谁发了消息，我是未读的
     };
   },
   methods:{
@@ -182,6 +191,10 @@ export default {
     atFriend(friend,curIndex){
       // friend.user_name
       this.cur_fri_name = friend.user_name
+
+      if(this.whoSendMsgs.has(friend.user_name)){
+        this.whoSendMsgs.delete(friend.user_name)
+      }
       // console.log(friend)
       this.$socket.emit('find friend socketid',friend.user_name)
       this.curIndex = curIndex

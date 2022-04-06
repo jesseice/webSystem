@@ -1,6 +1,6 @@
 <template>
   <div :class="{'c-fri':true,'current':index === curIndex}" @click="click">
-    <div class="c-fri-left">
+    <div :class="{'c-fri-left':true, 'my__badge--news':whoSendMsgs.has(friInfo.user_name)}">
       <img :src="friInfo.friend_avatar" width="43px" height="43px" alt="">
     </div>
     <div class="c-fri-middle">
@@ -28,6 +28,10 @@ export default {
       type:Number,
       default:0
     },
+    whoSendMsgs:{
+      type:Map,
+      default:()=>new Map()
+    }
   },
   methods:{
     click(){
@@ -54,6 +58,7 @@ export default {
 
   .c-fri-left{
     box-sizing: border-box;
+    position: relative;
   }
 
   .c-fri-middle{

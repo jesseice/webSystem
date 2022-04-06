@@ -15,3 +15,29 @@ export const getFriendList = ()=>{
     url:'/user/friend'
   })
 }
+
+// 获取个人题库信息
+export const getPrivateTopic = ()=>{
+  return request({
+    method:'GET',
+    url:'/user/private/topic'
+  })
+}
+
+// 收藏题目至个人题库
+export const collectTopic = data =>{
+  return request({
+    method:"POST",
+    url:'/user/collect/topic',
+    data
+  })
+}
+
+// 判断该题是否被收藏
+export const hasCollection = data =>{
+  return request({
+    method:"POST",
+    url: '/user/has/collect',
+    data
+  })
+}

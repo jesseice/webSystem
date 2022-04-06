@@ -13,7 +13,7 @@
       <el-menu-item index="3">创建题目</el-menu-item>
       <el-menu-item index="4">个人题库</el-menu-item>
       <el-menu-item class="p-layout__login" @click="login(1)" v-if="!isLogin">登录 | 注册</el-menu-item>
-      <el-menu-item class="p-layout__login my__badge" @click="login(2)" v-else>
+      <el-menu-item :class="{'p-layout__login':true, 'my__badge':hasMsg}" @click="login(2)" v-else>
         <el-avatar :src="user.user_avatar"></el-avatar>
         {{user.user_name}}
       </el-menu-item>
@@ -54,6 +54,7 @@ export default {
     // 保存给APP.vue用
     this.$store.commit('setUserInfo',this.user)
     // this.handleSelect(this.activeIndex)
+    this.$socket.emit('is has msg',this.user.user_name)
   },
   computed:{
     isLogin(){
@@ -87,12 +88,10 @@ export default {
     // 首页
     home(){
       this.$router.push({ path: '/' })
-      // console.log('首页');
     },
     // 模拟考试
     exam(){
       this.$router.push({ path: '/exam' })
-      // console.log('模拟考试');
     },
     // 创建题目
     draw(){
@@ -110,12 +109,10 @@ export default {
       }else{
         this.$router.push({ path: '/draw' })
       }
-      // console.log('创建题目');
     },
     // 个人题库
     question(){
       this.$router.push({ path: '/question' })
-      // console.log('个人题库');
     },
     login(index){
       if(index ===1){
@@ -133,7 +130,7 @@ export default {
 .p-layout{
   .el-menu{
     // 抽屉为2002
-    z-index: 2001;
+    z-index: 1999;
     position: fixed;
     top: 0;
     box-sizing: border-box;
