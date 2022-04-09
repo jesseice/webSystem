@@ -3,7 +3,11 @@
     <div class="p-chat">
       <div class="p-chat-left">
         <div class="p-chat-search">
-          <el-input placeholder="搜索用户" v-model="searchTxt" class="input-with-select" size="mini">
+          <el-input
+            placeholder="搜索用户"
+            class="input-with-select"
+            size="mini"
+            @focus="searchFocus">
             <el-button slot="append" icon="el-icon-search"></el-button>
           </el-input>
         </div>
@@ -19,38 +23,36 @@
           ></friend-list>
         </div>
       </div>
-      <keep-alive>
-        <div class="p-chat-right">
-          <div class="p-chat-print">
-            <div class="p-chat-print__title">
-              {{ friend_title }}
-            </div>
-            <div ref="msgBox" class="p-chat-print__msg">
-              <!-- 遍历聊天记录数据/msg-box为每一条信息 -->
-              <msg-box
-                v-for="(item,index) in msgs[this.cur_fri_name]" :key="item[1]+index"
-                :content="item[1]"
-                :point="item[0]"
-                :friAvatar="friend_list&&friend_list[curIndex]&&friend_list[curIndex].friend_avatar"
-              ></msg-box>
-            </div>
+      <div class="p-chat-right">
+        <div class="p-chat-print">
+          <div class="p-chat-print__title">
+            {{ friend_title }}
           </div>
-          <textarea
-            class="p-chat-input"
-            v-model="txt"
-            placeholder="请输入信息"
-            @keydown.enter="send"></textarea>
-
-          <!-- 占位 -->
-          <div class="p-chat-po"></div>
-          <el-button
-            class="p-bt"
-            type="success"
-            plain
-            @click="send"
-            >发送(S)</el-button>
+          <div ref="msgBox" class="p-chat-print__msg">
+            <!-- 遍历聊天记录数据/msg-box为每一条信息 -->
+            <msg-box
+              v-for="(item,index) in msgs[this.cur_fri_name]" :key="item[1]+index"
+              :content="item[1]"
+              :point="item[0]"
+              :friAvatar="friend_list&&friend_list[curIndex]&&friend_list[curIndex].friend_avatar"
+            ></msg-box>
+          </div>
         </div>
-      </keep-alive>
+        <textarea
+          class="p-chat-input"
+          v-model="txt"
+          placeholder="请输入信息"
+          @keydown.enter="send"></textarea>
+
+        <!-- 占位 -->
+        <div class="p-chat-po"></div>
+        <el-button
+          class="p-bt"
+          type="success"
+          plain
+          @click="send"
+          >发送(S)</el-button>
+      </div>
       <div class="p-chat__person">
         <el-tooltip class="item" effect="dark" :content="my_name" placement="left">
           <img :src="my_avatar" width="40px" height="40px" alt="头像">
@@ -58,7 +60,49 @@
         <el-tooltip class="item" effect="dark" content="返回主页" placement="left">
           <i class="el-icon-house" @click="goHome"></i>
         </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="通知" placement="left">
+          <el-popover
+            placement="right"
+            width="400"
+            trigger="click">
+            <el-badge slot="reference" :hidden="false" :value="0" class="item">
+              <i class="el-icon-bell"></i>
+            </el-badge>
+            <div v-if="false" style="width:100%;height:40px;line-height:40px">没人加你，别看了</div>
+            <note-a v-else></note-a>
+            <!-- <template slot="content">
+              15455
+            </template> -->
+          </el-popover>
+        </el-tooltip>
       </div>
+    </div>
+    <div v-if="searchShow" class="p-chat-lists__search__box">
+      <el-dialog
+        :visible.sync="searchShow"
+        width="350px"
+        top="25vh"
+      >
+        <template slot="title">
+          <el-input
+            placeholder="搜索用户"
+            v-model="searchTxt"
+            style="width:70%"
+            size="mini"
+            @input="inputSearch"
+          >
+            <el-button slot="append" icon="el-icon-search"></el-button>
+          </el-input>
+        </template>
+          <div v-if="searchUsers&&searchUsers.length" class="p-chat-lists__search__users">
+            <user-info
+              v-for="item in searchUsers"
+              :key="item.user_name"
+              :user="item"
+            ></user-info>
+          </div>
+          <el-empty v-else :description="description"></el-empty>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -66,6 +110,8 @@
 <script>
 import FriendList from './components/friendList'
 import MsgBox from './components/msgBox'
+import UserInfo from './components/userInfo.vue'
+import NoteA from './components/notice.vue'
 import {getItem, setItem} from '@/util/storage'
 import api from '@/api'
 const chatKey = 'chatInfoTag'
@@ -80,7 +126,9 @@ export default {
    */
   components:{
     FriendList,
-    MsgBox
+    MsgBox,
+    UserInfo,
+    NoteA
   },
   async created(){
     // 获取好友列表
@@ -158,7 +206,11 @@ export default {
   data() {
     return {
       txt: '',
+      timer:null,
       searchTxt:'',
+      searchShow:false,
+      searchUsers:null,
+      description:'你没输入,我怎么找',
       friend_list:null,
       friend_title:'',
       curIndex:0,
@@ -220,6 +272,32 @@ export default {
     setChatInfo(cur_user_name){
       setItem(cur_user_name+chatKey,this.msgs)
       this.$socket.emit('is in chat page',this.my_name,false)
+    },
+    searchFocus(){
+      this.searchShow = true
+    },
+    searchBlur(){
+      // this.searchShow = false
+    },
+    // 搜索 防抖
+    inputSearch(){
+      if(this.timer){
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(this.search, 1000)
+    },
+    async search(){
+      this.searchUsers = null
+      let txt = this.searchTxt.trim()
+      if(!txt){
+        this.description = '你没输入,我怎么找'
+        return false
+      }
+      const res = await api.findFriend(txt)
+      if(res.code === 200){
+        this.searchUsers = res.data
+        this.description = res.data&&res.data.length !== 0?'你没输入,我怎么找':'没找到这个人啊,你是不是打错名字了'
+      }
     }
   }
 }
@@ -260,10 +338,20 @@ export default {
         padding: 0 10px;
       }
       .p-chat-lists{
+        position: relative;
         height: 583px;
         width: 237px;
         // background-color: #a9a6a621;
-        overflow:scroll;
+        overflow-y:auto;
+        .p-chat-lists__search__box{
+          position: absolute;
+          z-index: 20;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          background: #fff
+        }
       }
       .p-chat-lists::-webkit-scrollbar{
         /*滚动条整体样式*/

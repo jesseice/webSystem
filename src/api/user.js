@@ -41,3 +41,11 @@ export const hasCollection = data =>{
     data
   })
 }
+
+// 搜索好友
+export const findFriend = param =>{
+  return request({
+    method:"GET",
+    url: `/user/find/friend?user_name=${param}`,
+  })
+}

@@ -9,7 +9,6 @@
           </el-form-item>
           <el-form-item prop="password" :rules="[{ required: true, message: '密码不能为空'}]">
             <el-input :clearable='true' placeholder="请输入密码" v-model="form1.password" show-password></el-input>
-            <!-- <el-input  v-model="input" show-password></el-input> -->
           </el-form-item>
           <el-button type="primary" size="medium" @keyup.enter="login" @click="login" :loading="loading">{{!loading?'登录':'登陆中...'}}</el-button>
         </el-form>
@@ -100,7 +99,6 @@ export default {
 
           if(res.code === "200"){
             this.$message.success(res.msg)
-            // setItem("USER_KEY",res.token)
             setItem("USER_NAME",this.form1.acount)
             // 设置登录属性 
             this.$store.commit('updateLogin',[1,res.token])

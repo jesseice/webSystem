@@ -1,5 +1,5 @@
 <template>
-  <div class="c-collect" @click="collect">
+  <div class="c-collect" @click="col">
     <i v-if="status === 0" class="el-icon-star-off"></i>
     <i v-else class="el-icon-star-on"></i>
   </div>
@@ -31,8 +31,7 @@ export default {
   data() {
     return {
       status: 0,// 0没有收藏  1  收藏
-      timer:null,
-      flag:false
+      timer:null
     };
   },
   methods:{
@@ -44,6 +43,12 @@ export default {
         this.$message.error(res.msg)
       }
       this.status = res.status
+    },
+    col(){
+      if(this.timer){
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(this.collect,200)
     }
   }
 }

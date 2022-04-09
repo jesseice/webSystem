@@ -51,6 +51,10 @@
         </el-checkbox-group>
 
       </el-form-item>
+      <el-form-item label="题目共享" prop="is_private">
+        <el-radio v-model="form.is_private" label=0>共享给所有用户</el-radio>
+        <el-radio v-model="form.is_private" label=1>只有自己能用</el-radio>
+      </el-form-item>
       <el-form-item label="题目标签">
         <tag
           :list="tagList"
@@ -61,8 +65,25 @@
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即创建</el-button>
         <el-button @click="reSet">取消</el-button>
+        <el-button @click="isPreview = !isPreview">{{isPreview?'关闭预览':'打开预览'}}</el-button>
       </el-form-item>
     </el-form>
+    <transition name="el-zoom-in-center">
+      <div :style="{'margin-top':topH+'px'}" class="p-draw__preview" v-show="isPreview">
+        <h5 class="text__center">预览</h5>
+        <div class="p-draw__preview__title">{{form.title}}
+          &nbsp;&nbsp;&nbsp;
+          ({{(form.type==='0'&&'单选题')||(form.type==='1'&&'判断题')||(form.type==='2'&&'多选题')}})</div>
+        <div class="p-draw__preview__selects" v-if="form.select.length !==1&&form.select[0].value !== ''">
+          <div
+            class="p-draw__preview__select"
+            v-for="(item,ind) in form.select"
+            :key="ind">
+            <p class="p-draw__preview__select__p">{{item.value}}</p>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -75,6 +96,8 @@ export default {
   },
   data() {
     return {
+      isPreview:false,
+      topH:0,
       tagList:[],
       form: {
         title: '',
@@ -86,11 +109,15 @@ export default {
         type: '',
         resList:[],
         res:'',
+        is_private:undefined,// 0公开 1 私有
         tags:[]
       },
       rules:{
         title:[
           { required: true, message: '请输入题目标题', trigger: 'blur' },
+        ],
+        is_private:[
+          { required: true, message: '请选择题目是否公开', trigger: 'blur' },
         ],
         type:[
           { required: true, message: '请选择题目类型', trigger: 'change' }
@@ -112,10 +139,12 @@ export default {
     this.tagList = resTag.data
     console.log(resTag)
   },
+  mounted(){
+    window.addEventListener('scroll', this.handleScroll)
+  },
   methods: {
     onSubmit() {
       this.$refs['form'].validate(valid=>{
-        console.log(valid);
         if(valid){
           this.draw() // 提交
         }else{
@@ -149,11 +178,25 @@ export default {
         subject_type:_form.type,
         subject_title:_form.title,
         subject_select,
-        tags:_form.tags
+        tags:_form.tags,
+        is_private:_form.is_private
       }
       const res = await api.createQ(form)
-      console.log(res);
-      this.reSet()
+      if(res.code === 200){
+        console.log(res)
+        this.$message.success(res.msg)
+        this.addCollect(res.data)
+        this.reSet()
+      }else{
+        this.$message.error(res.msg)
+      }
+    },
+    async addCollect(data){
+      let sbj_id = data.sbj_id
+      let sbj_title = data.sbj_title
+      let sbj_type = data.sbj_type
+      const res = await api.collectTopic({sbj_id, sbj_title, sbj_type, status:0})
+      console.log('插入个人题库:',res)
     },
     addSelect(){
       const form = this.form
@@ -176,6 +219,9 @@ export default {
     setTag(list){
       // this.curTag.push(id)
       this.form.tags = [...list]
+    },
+    handleScroll(){
+      this.topH = document.documentElement.scrollTop || document.body.scrollTop
     }
   }
 }
@@ -183,6 +229,8 @@ export default {
 
 <style lang="scss">
 .p-draw{
+  display: flex;
+  justify-content: space-between;
   .el-form-item__content{
     position: relative;
     .el-input__inner,.el-textarea__inner{
@@ -190,5 +238,42 @@ export default {
     }
   }
   
+  .p-draw__preview{
+    width: 600px;
+    max-height: 500px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 20px 10px;
+    border: 1px #E4EdED solid;
+    box-shadow: 2px #d4d4d4;
+    .p-draw__preview__title{
+      position: relative;
+      margin: 10px auto;
+      color: #409EFF;
+    }
+    .p-draw__preview__selects{
+      width: 100%;
+      min-height:250px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      row-gap: 20px;
+      .p-draw__preview__select{
+        width: 100%;
+        border-radius: 6px;
+        border: 1px solid #d4d4d4;
+        background: #fff;
+        font-size: 14px;
+        padding: 10px;
+        box-sizing: border-box;
+        .p-draw__preview__select__p{
+          width: 100%;
+          word-break: break-all;
+          word-wrap: break-word;
+          box-sizing: border-box;
+        }
+      }
+    }
+  }
 }
 </style>

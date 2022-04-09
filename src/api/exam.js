@@ -24,3 +24,12 @@ export const getSubNum = ()=>{
     url:'/api/getSubNum'
   })
 }
+
+// 查询题目
+export const watchTopic = data =>{
+  return request({
+    method:'POST',
+    url: '/api/find/topic',
+    data
+  })
+}

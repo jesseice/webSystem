@@ -1,25 +1,35 @@
 <template>
-  <div class="c-private-topic">
-    <div style="margin-bottom:20px">
+  <div class="p-private-topic">
+    <div class="p-private-topic__bts" style="margin-bottom:20px">
       <el-button
         type="primary"
         @click="isEdit = true"
         v-if="!isEdit"
         >编辑个人题库</el-button>
-      <el-button type="primary"
-        v-if="isEdit"
-        @click="onSave"
-        :loading="isloading"
-        >{{isloading?'保存中...':'保存修改'}}</el-button>
-      <el-button
-        type="primary"
-        v-if="isEdit"
-        plain
-        @click="onCancel"
-        >取消编辑</el-button>
+      <div class="p-private-topic__bts__edit">
+        <el-button type="primary"
+          v-if="isEdit"
+          @click="onSave"
+          :loading="isloading"
+          >{{isloading?'保存中...':'保存修改'}}</el-button>
+        <el-button
+          type="primary"
+          v-if="isEdit"
+          plain
+          @click="onCancel"
+          >取消编辑</el-button>
+      </div>
+      <div class="p-private-topic__bts__create">
+        <el-button type="primary"
+          @click="addTopic(0)"
+          >添加题目</el-button>
+        <el-button type="primary"
+          @click="addTopic(1)"
+          >题目少？去刷题</el-button>
+      </div>
     </div>
     <el-table
-      :data="tableData"
+      :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
       style="width:100%"
       border>
       <template slot="empty"><el-empty description="暂无数据！！！"></el-empty></template>
@@ -29,6 +39,9 @@
         type="index"
         width="50"
         align="center">
+        <template slot-scope="scope">
+          <span>{{(currentPage - 1) * pageSize + scope.$index + 1}}</span>
+        </template>
       </el-table-column>
       <el-table-column
         v-for="(item, index) in columns"
@@ -37,7 +50,8 @@
         :label="item.label"
         :align="item.align"
         :width="item.width"
-        >
+        :sortable="item.sortable"
+      >
       </el-table-column>
       <el-table-column
         prop="subject_tag"
@@ -54,26 +68,51 @@
         </template>
       </el-table-column>
       <el-table-column
-        v-if="isEdit"
         fixed="right"
         label="操作"
         width="120">
         <template slot-scope="scope">
           <el-button
+            v-if="isEdit"
             @click.native.prevent="deleteRow(scope.$index, tableData)"
             type="text"
             size="small">
             移除
           </el-button>
+          <el-popover
+            placement="right"
+            width="500"
+            trigger="click">
+            <el-button
+              slot="reference"
+              @click.native.prevent="watchTopic(scope.$index, tableData)"
+              type="text"
+              size="small">
+              查看题目
+            </el-button>
+            <watch-topic :subject="watchSbj"></watch-topic>
+          </el-popover>
         </template>
       </el-table-column>
     </el-table>
+     <el-pagination
+      layout="prev, pager, next"
+      :hide-on-single-page="tableData.length/pageSize <= 1"
+      :page-size="pageSize"
+      @current-change="handlePage"
+      :current-page="currentPage"
+      :total="tableData.length">
+    </el-pagination>
   </div>
 </template>
 
 <script>
 import api from '@/api'
+import WatchTopic from './components/watch.vue'
 export default {
+  components:{
+    WatchTopic
+  },
   async created(){
     let res = await api.getPrivateTopic()
     let newRes = res.map(val=>{
@@ -90,6 +129,9 @@ export default {
   },
   data() {
     return {
+      watchSbj:null,
+      currentPage:1,
+      pageSize:10,
       initData:[],
       tableData: [
         // {
@@ -103,7 +145,8 @@ export default {
           prop:'privateTopic_id',
           label:'题库id',
           align:'center',
-          width:'50'
+          width:'70',
+          sortable:true
         },
         {
           prop: 'subject_title',
@@ -122,6 +165,23 @@ export default {
     }
   },
   methods:{
+    async watchTopic(index,rows){
+      // console.log(index,rows)
+      let type = rows[index].subject_type
+      let subject_id = rows[index].subject_id
+      let subject_type = (type ==='单选题'&& 0) || (type ==='判断题'&& 1) || (type ==='多选题'&& 2)
+      subject_type = subject_type ? subject_type : 0
+      const res = await api.watchTopic( {subject_type, subject_id } )
+      if(res.code === 200){
+        this.$message.success(res.msg)
+        this.watchSbj = {
+          subject_type: type,
+          subject_title: rows[index].subject_title,
+          subject_result: res.data[0].subject_result.split('&&'),
+          subject_select: res.data[0].subject_select.split('&&')
+        }
+      }
+    },
     deleteRow(index, rows) {
       let a = rows.splice(index, 1) // ****返回一个数组里面是被删元素****
       this.deleteArr.push(...a)
@@ -155,14 +215,28 @@ export default {
     onCancel(){
       this.isEdit = false
       this.tableData =[...this.initData]
+    },
+    addTopic(type){
+      if(type === 0){
+        this.$router.push('/draw')
+      }else{
+        this.$router.push('/exam')
+      }
+    },
+    handlePage(e){
+      this.currentPage = e
     }
-    ///// 创建题目自动生成到个人题库
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.c-private-topic{
-
+.p-private-topic{
+  width: 100%;
+  .p-private-topic__bts{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
 }
 </style>

@@ -7,11 +7,10 @@
       <div style="text-align:center;margin-bottom:20px; color: #409EFF;">题卡</div>
       <el-divider></el-divider>
       <div class="c-l-side__qc">
-        <div class="c-l-side__num"
-          v-for="(item,ind) in obj" :key="ind"
-        >
-          <a href="javascript:;" @click="goAnchor(`#title${ind}`)">
-            <el-button :type="!sideObj[ind]? 'plain':'primary'" size="small">{{ ind+1 }}</el-button>
+        <div class="c-l-side__num" v-for="(item,ind) in obj" :key="ind">
+          <a :class="{'c-l-side__num__a':true,'a_primary':!sideObj[ind]?false:true}" href="javascript:;" @click="goAnchor(`#title${ind}`)">
+            {{ ind+1 }}
+            <!-- <el-button :type="!sideObj[ind]? 'plain':'primary'" size="small">{{ ind+1 }}</el-button> -->
           </a>
         </div>
       </div>
@@ -119,6 +118,32 @@ export default {
       column-gap: 15px;
       row-gap: 10px;
       // justify-content: space-between;
+      .c-l-side__num{
+        width: 39px;
+        height: 32px;
+        .c-l-side__num__a{
+          display: block;
+          width: 100%;
+          height: 100%;
+          text-decoration: none;
+          text-align: center;
+          background: #FFF;
+          border: 1px solid #DCDFE6;
+          color: #606266;
+          line-height: 32px;
+          font-size: 12px;
+        }
+        .c-l-side__num__a:hover{
+          color: #409EFF;
+          background: #ecf5ff;
+          border-color: #b3d8ff;
+        }
+        .a_primary{
+          color: #FFF;
+          background-color: #409EFF;
+          border-color: #409EFF;
+        }
+      }
     }
     .c-l-side__bt__wrap{
       position: absolute;
