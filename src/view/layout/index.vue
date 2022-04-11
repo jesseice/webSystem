@@ -55,6 +55,8 @@ export default {
     this.$store.commit('setUserInfo',this.user)
     // this.handleSelect(this.activeIndex)
     this.$socket.emit('is has msg',this.user.user_name)
+
+    this.$socket.emit('is in chat page',this.user.user_name,false)
   },
   computed:{
     isLogin(){

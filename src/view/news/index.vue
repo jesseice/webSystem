@@ -197,7 +197,7 @@ export default {
     // 页面加载时只执行 onload 事件。
     // 页面关闭时，先 onbeforeunload 事件，再 onunload 事件。
     // 页面刷新时先执行 onbeforeunload事件，然后 onunload 事件，最后 onload 事件
-    window.addEventListener('beforeunload', e => this.beforeunloadFn(e))
+    window.addEventListener('beforeunload', this.beforeunloadFn)
   },
   beforeDestroy(){
    this.setChatInfo(this.my_name)
@@ -275,9 +275,6 @@ export default {
     },
     searchFocus(){
       this.searchShow = true
-    },
-    searchBlur(){
-      // this.searchShow = false
     },
     // 搜索 防抖
     inputSearch(){

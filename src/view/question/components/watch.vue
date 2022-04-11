@@ -12,7 +12,7 @@
         <p class="c-watch__select__p"><span>选项{{ind + 1}}:&nbsp;&nbsp;&nbsp;</span>{{item}}</p>
       </div>
       <div>
-        正确答案:<span v-for="(val, ind) in subject.subject_result" :key="ind">选项{{val*1+1}}</span>
+        <span style="color: rgb(57, 201, 57)">正确答案:&nbsp; &nbsp;</span><span v-for="(val, ind) in subject.subject_result" :key="ind">选项{{val*1+1}}</span>
       </div>
     </div>
   </div>
