@@ -106,7 +106,7 @@ export default {
   .c-l-side__content{
     width: 285px;
     min-height: 300px;
-    padding: 20px 15px;
+    padding: 20px 15px 60px;
     box-sizing: border-box;
     background-color: #fff;
     position: absolute;
@@ -148,7 +148,7 @@ export default {
     .c-l-side__bt__wrap{
       position: absolute;
       width: 255px;
-      bottom: 20px;
+      bottom: 10px;
       display: flex;
       justify-content: space-between;
     }

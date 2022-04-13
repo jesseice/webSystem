@@ -25,7 +25,7 @@
           type="danger"
           icon="el-icon-delete-solid"
           @click.prevent="removeDomain(index)"
-          v-if="form.select.length!==1"
+          v-if="form.select.length !== 1 && form.type !== '1'"
           circle
         >
         </el-button>
@@ -34,7 +34,7 @@
           type="primary"
           icon="el-icon-plus"
           circle
-          v-if="index === form.select.length-1"
+          v-if="index === form.select.length-1  && form.type !== '1'"
           @click="addSelect"
         >
         </el-button>
@@ -93,6 +93,21 @@ import Tag from '@/components/tag'
 export default {
   components:{
     Tag
+  },
+  computed:{
+    type(){
+      return this.form.type
+    }
+  },
+  watch:{
+    type:{
+      handler: function(newVal){
+        if(newVal === '1'){
+          console.log(1111)
+          this.form.select = [{value:''}, {value:''}]
+        }
+      }
+    }
   },
   data() {
     return {
@@ -155,6 +170,9 @@ export default {
     reSet(){
       this.$nextTick(()=>{
         this.$refs['form'].resetFields()
+        this.form.select = [{
+          value:''
+        }]
         this.$refs['tag'].reSet()
       })
     },
