@@ -96,7 +96,7 @@
       </el-table-column>
     </el-table>
      <el-pagination
-      layout="prev, pager, next"
+      layout="total,prev, pager, next"
       :hide-on-single-page="tableData.length/pageSize <= 1"
       :page-size="pageSize"
       @current-change="handlePage"
@@ -167,8 +167,9 @@ export default {
   methods:{
     async watchTopic(index,rows){
       // console.log(index,rows)
-      let type = rows[index].subject_type
-      let subject_id = rows[index].subject_id
+      let ind = (this.currentPage - 1)*this.pageSize + index*1
+      let type = rows[ind].subject_type
+      let subject_id = rows[ind].subject_id
       let subject_type = (type ==='单选题'&& 0) || (type ==='判断题'&& 1) || (type ==='多选题'&& 2)
       subject_type = subject_type ? subject_type : 0
       const res = await api.watchTopic( {subject_type, subject_id } )
@@ -176,14 +177,15 @@ export default {
         this.$message.success(res.msg)
         this.watchSbj = {
           subject_type: type,
-          subject_title: rows[index].subject_title,
+          subject_title: rows[ind].subject_title,
           subject_result: res.data[0].subject_result.split('&&'),
           subject_select: res.data[0].subject_select.split('&&')
         }
       }
     },
     deleteRow(index, rows) {
-      let a = rows.splice(index, 1) // ****返回一个数组里面是被删元素****
+      let ind = (this.currentPage - 1)*this.pageSize + index*1
+      let a = rows.splice(ind, 1) // ****返回一个数组里面是被删元素****
       this.deleteArr.push(...a)
     },
     onSave(){
