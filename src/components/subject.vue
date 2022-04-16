@@ -6,6 +6,14 @@
       <div class="c-subject__item-title"><span>{{ind+1}}、</span>
         {{item.subject_title}}&nbsp;&nbsp;&nbsp;
         ({{(item.subject_type===0&&'单选题')||(item.subject_type===1&&'判断题')||(item.subject_type===2&&'多选题')}})
+        <p v-if="isCheckAnswer">(答案：
+          <span
+            v-for="(a,b) in sbjAnswer&&sbjAnswer[item.subject_type][item.subject_id].split('&&')"
+            :key="b"
+            style="color: rgb(111, 172, 111)">
+            选项{{a*1+1}}
+          </span>)
+        </p>
         <collect-topic
           :sbj_id="item.subject_id"
           :sbj_type="item.subject_type"
@@ -20,6 +28,7 @@
           :subject_id="item.subject_id"
           :subject_type="item.subject_type"
           :items="item.subject_select"
+          :isCheckAnswer ="isCheckAnswer"
           v-if="item.subject_type ===0||item.subject_type===1"
         ></radio-select>
         <multiple-select
@@ -29,6 +38,7 @@
           :subject_id="item.subject_id"
           :subject_type="item.subject_type"
           :items="item.subject_select"
+          :isCheckAnswer ="isCheckAnswer"
           v-else-if="item.subject_type ===2"
         ></multiple-select>
       </div>
@@ -71,8 +81,15 @@ export default {
       //   subject_id:[],
       //   subject_result:[]
       // },
-      sideObj:{}
+      sideObj:{},
+      // 提交后返回的试题答案
+      sbjAnswer:null
     };
+  },
+  computed:{
+    isCheckAnswer(){
+      return this.$store.state.isCheckAnswer
+    }
   },
   created(){
     this.$nextTick(()=>{
@@ -90,6 +107,7 @@ export default {
     setResult(id,result,type){
       this[`subResult${type}`][id] = result
     },
+    // 提交答案
     async commit(){
       let subRes = {
         '0':this.subResult0,
@@ -97,8 +115,15 @@ export default {
         '2':this.subResult2,
       }
       const res = await api.commitResult(subRes)
-      eventBus.$emit('isShow',res)
-      this.$store.commit('updateIsExam',false)
+      if(res.code === 200){
+        this.$message.success(res.msg)
+        this.sbjAnswer = res.data.apiObj
+        // 传过去mark组件
+        eventBus.$emit('isShow',res.data)
+        // 传过去题卡
+        eventBus.$emit('resolveError',res.data.errId)
+        this.$store.commit('updateIsExam',false)
+      }
     },
     setSideNum(ind,bool){
       if (this.sideObj[ind] === bool){ return false}

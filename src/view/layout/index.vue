@@ -45,6 +45,7 @@ export default {
     };
   },
   async created(){
+    console.log(this.$route)
     // 防止刷新丢失菜单选中项的状态
     this.activeIndex = JSON.parse(window.sessionStorage.getItem("currentIndex"))  || '1'
 

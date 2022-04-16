@@ -1,7 +1,7 @@
 <template>
 <!-- wyd-单选、判断选项组件 -->
   <div class="c-radio-select">
-    <div :class="{'c-radio-select__wrap':true,'active':currentIndex===index}" @click="select(index)" v-for="(item,index) in items" :key="index">
+    <div :class="{'c-radio-select__wrap':true,'hover':!isCheckAnswer,'active':currentIndex===index}" @click="select(index)" v-for="(item,index) in items" :key="index">
       <p class="c-radio-select__select">{{item}}</p>
     </div>
   </div>
@@ -28,6 +28,10 @@ export default {
     subject_type:{
       type:Number,
       default:0
+    },
+    isCheckAnswer:{
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -37,6 +41,7 @@ export default {
   },
   methods:{
     select(index){
+      if(this.isCheckAnswer){return}
       this.currentIndex = index
       this.$emit('setRes',this.subject_id,`${index}`,this.subject_type)
       this.$emit('setSide',this.ix,true)
@@ -70,7 +75,7 @@ export default {
         box-sizing: border-box;
       }
     }
-    .c-radio-select__wrap:hover{
+    .hover:hover{
       background-color: #d4d4d4;
       cursor: pointer;
       border-color: #409EFF;

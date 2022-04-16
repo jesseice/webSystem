@@ -8,7 +8,14 @@
       <el-divider></el-divider>
       <div class="c-l-side__qc">
         <div class="c-l-side__num" v-for="(item,ind) in obj" :key="ind">
-          <a :class="{'c-l-side__num__a':true,'a_primary':!sideObj[ind]?false:true}" href="javascript:;" @click="goAnchor(`#title${ind}`)">
+          <a
+            :class="{'c-l-side__num__a':true,
+            'a_primary':!sideObj[ind]?false:true,
+            'error_boder':isCheckAnswer && errorArr.findIndex(val=>val === item.subject_id) >=0,
+            'hover':!isCheckAnswer}"
+            href="javascript:;"
+            @click="goAnchor(`#title${ind}`)"
+            >
             {{ ind+1 }}
             <!-- <el-button :type="!sideObj[ind]? 'plain':'primary'" size="small">{{ ind+1 }}</el-button> -->
           </a>
@@ -33,17 +40,23 @@ export default {
     obj:{
       type:Array,
       default:()=>[]
+    },
+    isError:{
+      type: Boolean,
+      default:false
     }
   },
   data() {
     return {
       topH: 0,
       timer:null,
-      sideObj:{}
+      sideObj:{},
+      errorArr:null
     };
   },
   created(){
     eventBus.$on('setSideObj',this.setSideObj)
+    eventBus.$on('resolveError',this.resolveError)
   },
   mounted(){
     window.addEventListener('scroll', this.handleScroll)
@@ -51,6 +64,9 @@ export default {
   computed:{
     isShow(){
       return this.$store.state.isExam
+    },
+    isCheckAnswer(){
+      return this.$store.state.isCheckAnswer
     }
   },
   methods:{
@@ -94,6 +110,14 @@ export default {
     },
     out(){
       this.$router.replace('/')
+    },
+    resolveError(data){
+      let res = data
+      let newArr = []
+      for(let k in res ){
+        res[k].forEach(val => newArr.push(val))
+      }
+      this.errorArr = [...newArr]
     }
   }
 }
@@ -133,7 +157,7 @@ export default {
           line-height: 32px;
           font-size: 12px;
         }
-        .c-l-side__num__a:hover{
+        .hover:hover{
           color: #409EFF;
           background: #ecf5ff;
           border-color: #b3d8ff;
@@ -142,6 +166,9 @@ export default {
           color: #FFF;
           background-color: #409EFF;
           border-color: #409EFF;
+        }
+        .error_boder{
+          border:2px rgb(209, 82, 82) solid;
         }
       }
     }

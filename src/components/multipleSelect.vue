@@ -3,6 +3,7 @@
   <div class="c-multiple-select">
     <div
       :class="{'c-multiple-select__wrap':true,
+      'hover':!isCheckAnswer,
       'active':currentIndex[index]===true}"
       @click="select(index)" v-for="(item,index) in items" 
       :key="index">
@@ -32,6 +33,10 @@ export default {
     subject_type:{
       type:Number,
       default:0
+    },
+    isCheckAnswer:{
+      type: Boolean,
+      default: false
     }
   },
   created(){
@@ -47,6 +52,7 @@ export default {
   },
   methods:{
     select(index){
+      if(this.isCheckAnswer){return}
       this.currentIndex[index] = !this.currentIndex[index]
       this.subject_result = []
       for(let k in this.currentIndex){
@@ -89,7 +95,7 @@ export default {
         box-sizing: border-box;
       }
     }
-    .c-multiple-select__wrap:hover{
+    .hover:hover{
       background-color: #d4d4d4;
       cursor: pointer;
       border-color: #409EFF;

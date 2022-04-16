@@ -2,7 +2,8 @@
   <div class="c-mark">
     <el-dialog
      :visible.sync="dialogTableVisible"
-      :close-on-click-modal="false">
+     :show-close="false"
+     :close-on-click-modal="false">
       <div class="c-mark-title"></div>
       <div class="c-mark-ct">
         <div class="c-mark-ct__p">
@@ -15,8 +16,8 @@
         </div>
       </div>
       <div class="c-mark-bt">
-        <el-button plain>核对答案</el-button>
-        <el-button plain>再接再厉</el-button>
+        <el-button plain @click="checkAnswer">核对答案</el-button>
+        <el-button plain @click="back">自信离开</el-button>
       </div>
     </el-dialog>
   </div>
@@ -48,6 +49,13 @@ export default {
       this.dialogTableVisible = true
       this.percentage = Math.floor((res.zq/res.count)*100)
     },
+    checkAnswer(){
+      this.$store.commit('setCheckAnswer',true)
+      this.dialogTableVisible = false
+    },
+    back(){
+      this.$router.replace('/')
+    }
   }
 }
 </script>
