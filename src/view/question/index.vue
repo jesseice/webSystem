@@ -85,7 +85,7 @@
             trigger="click">
             <el-button
               slot="reference"
-              @click.native.prevent="watchTopic(scope.$index, tableData)"
+              @click.native.prevent="watchTopic(scope.$index, tableData,scope.row)"
               type="text"
               size="small">
               查看题目
@@ -165,19 +165,17 @@ export default {
     }
   },
   methods:{
-    async watchTopic(index,rows){
-      // console.log(index,rows)
-      let ind = (this.currentPage - 1)*this.pageSize + index*1
-      let type = rows[ind].subject_type
-      let subject_id = rows[ind].subject_id
+    async watchTopic(index,rows,row){
+      let id = row.subject_id
+      let type = row.subject_type
       let subject_type = (type ==='单选题'&& 0) || (type ==='判断题'&& 1) || (type ==='多选题'&& 2)
       subject_type = subject_type ? subject_type : 0
-      const res = await api.watchTopic( {subject_type, subject_id } )
+      const res = await api.watchTopic( {subject_type, subject_id: id } )
       if(res.code === 200){
         this.$message.success(res.msg)
         this.watchSbj = {
           subject_type: type,
-          subject_title: rows[ind].subject_title,
+          subject_title: row.subject_title,
           subject_result: res.data[0].subject_result.split('&&'),
           subject_select: res.data[0].subject_select.split('&&')
         }
