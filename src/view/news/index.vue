@@ -12,14 +12,15 @@
           </el-input>
         </div>
         <div class="p-chat-lists">
+          <!-- 好友列表 -->
           <friend-list
-          v-for="(item,index) in friend_list"
-          :key="item.friend_id"
-          :friInfo="item"
-          :index="index"
-          :curIndex="curIndex"
-          :whoSendMsgs="whoSendMsgs"
-          @atFriend = atFriend
+            v-for="(item,index) in friend_list"
+            :key="item.friend_id"
+            :friInfo="item"
+            :index="index"
+            :curIndex="curIndex"
+            :whoSendMsgs="whoSendMsgs"
+            @atFriend = atFriend
           ></friend-list>
         </div>
       </div>
@@ -62,17 +63,18 @@
         </el-tooltip>
         <el-tooltip class="item" effect="dark" content="通知" placement="left">
           <el-popover
-            placement="right"
+            placement="left"
             width="400"
             trigger="click">
-            <el-badge slot="reference" :hidden="false" :value="0" class="item">
+            <el-badge slot="reference" :hidden="friReqs.length?false:true" :value="friReqs.length" class="item">
               <i class="el-icon-bell"></i>
             </el-badge>
-            <div v-if="false" style="width:100%;height:40px;line-height:40px">没人加你，别看了</div>
-            <note-a v-else></note-a>
-            <!-- <template slot="content">
-              15455
-            </template> -->
+            <div v-if="friReqs.length ? false : true" style=" text-align:center; color:green; width:100%;height:40px;line-height:40px">暂无通知</div>
+            <note-a
+              v-else
+              :friends="friReqs"
+              @clearReq="clearReq"
+              ></note-a>
           </el-popover>
         </el-tooltip>
       </div>
@@ -96,9 +98,11 @@
         </template>
           <div v-if="searchUsers&&searchUsers.length" class="p-chat-lists__search__users">
             <user-info
-              v-for="item in searchUsers"
+              v-for="(item, index) in searchUsers"
               :key="item.user_name"
               :user="item"
+              :index="index"
+              @clearSearchUsers="clearSearchUsers"
             ></user-info>
           </div>
           <el-empty v-else :description="description"></el-empty>
@@ -133,29 +137,7 @@ export default {
   async created(){
     // 获取好友列表
     const res =await api.getFriendList()
-    if(res.code === 200){
-      this.friend_list = res.data
-      this.$message.success(res.msg)
-      this.$nextTick(()=>{
-        // 初始化列表第一个好友的聊天界面
-        this.atFriend(this.friend_list[0],0)
-        // 获取聊天记录
-        let msg_obj = getItem(this.my_name+chatKey)
-        if(msg_obj&&Object.values(msg_obj).length>0){
-
-          this.msgs = {...msg_obj}
-          
-        }
-        for(let i =0;i< this.friend_list.length;i++){
-          if(!this.msgs[this.friend_list[i].user_name]){
-            console.log(1);
-            this.msgs[this.friend_list[i].user_name] = []
-          }
-        }
-      })
-    }else{
-      this.$message.error(res.msg)
-    }
+    this.getFri(res)
     console.log(this.friend_list)
     // 获得当前好友的socketid
     this.$socket.on('find friend socketid',(my_socketid,fri_socketid)=>{
@@ -175,6 +157,21 @@ export default {
       })
     })
 
+    // 监听离线好友请求信息
+    this.$socket.on('check leave chum req', msgArr =>{
+      console.log(msgArr)
+      try{
+        this.friReqs.push(...msgArr)
+      }catch(err){
+        console.log('err', err)
+      }
+    })
+
+    this.$socket.emit('set sockets',this.my_name)
+
+    // 获取是否有离线的好友请求信息
+    this.$socket.emit('check leave chum req', this.my_name)
+
     // 获取是否有离线消息
     this.$socket.emit('check leave msg',this.my_name)
     // 告诉服务器我在聊天页面了
@@ -190,6 +187,21 @@ export default {
       this.msgs[authorName].push(['left',msg])
       this.$forceUpdate()
       this.scrollBottom()
+    })
+
+    // 好友请求反馈 
+    this.$socket.on('back fri req status', async status =>{
+      console.log('status',status)
+      if(status){
+        let r = await api.getFriendList()
+        this.getFri(r)
+      }
+    })
+
+    // 监听好友请求
+    this.$socket.on('add friend', (fri_id, fri_name, fri_avatar)=>{
+      console.log(fri_name,fri_id)
+      this.friReqs.push({fri_name, fri_id, fri_avatar})
     })
   },
   mounted(){
@@ -220,10 +232,38 @@ export default {
       my_name:JSON.parse(window.sessionStorage.getItem('USER_INFO')).user_name||'',
       // msg:[], // fri_name:[['left','在吗'],['right','在啊,怎么了']],
       msgs:{}, // {fri_name:[['left','在吗'],['right','在啊,怎么了']],fri_name:[['left','在吗'],['right','在啊,怎么了']]}
-      whoSendMsgs:new Map() // 谁发了消息，我是未读的
+      whoSendMsgs:new Map(), // 谁发了消息，我是未读的
+      friReqs:[] // 存哪个用户发过来的好友请求信息
     };
   },
   methods:{
+    getFri(res){
+      if(res.code === 200){
+        this.friend_list = res.data
+        this.$message.success(res.msg)
+        let flag = res.data.length ? true : false
+        this.$nextTick(()=>{
+          if(!flag){return false}
+          // 初始化列表第一个好友的聊天界面
+          this.atFriend(this.friend_list[0],0)
+          // 获取聊天记录
+          let msg_obj = getItem(this.my_name+chatKey)
+          if(msg_obj&&Object.values(msg_obj).length>0){
+
+            this.msgs = {...msg_obj}
+            
+          }
+          for(let i =0;i< this.friend_list.length;i++){
+            if(!this.msgs[this.friend_list[i].user_name]){
+              console.log(1);
+              this.msgs[this.friend_list[i].user_name] = []
+            }
+          }
+        })
+      }else{
+        this.$message.error(res.msg)
+      }
+    },
     send(){
       this.txt = this.txt.trim()
       let txt = this.txt
@@ -295,6 +335,12 @@ export default {
         this.searchUsers = res.data
         this.description = res.data&&res.data.length !== 0?'你没输入,我怎么找':'没找到这个人啊,你是不是打错名字了'
       }
+    },
+    clearReq(index){
+      this.friReqs.splice(index, 1)
+    },
+    clearSearchUsers(index){
+      this.searchUsers.splice(index, 1)
     }
   }
 }

@@ -16,11 +16,19 @@ export default {
     user:{
       type:Object,
       default:()=>{}
+    },
+    index:{
+      type: Number,
+      default: 0
     }
   },
   methods:{
     addFri(){
-      console.log(1);
+      let fri = this.user
+      let my = JSON.parse( window.sessionStorage.getItem('USER_INFO'))
+      this.$socket.emit('add friend', fri.user_id, fri.user_name, my.user_id, my.user_name, my.user_avatar)
+      this.$emit('clearSearchUsers', this.index)
+      this.$message.success('已发送好友请求！')
     }
   }
 }

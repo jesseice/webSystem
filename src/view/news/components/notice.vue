@@ -1,9 +1,9 @@
 <template>
   <div class="c-note">
     <h3 style="text-align:center">好友请求</h3>
-    <div class="c-note-box" v-for="(user, index) in fri" :key="index">
-      <img src="" alt="da" width="45px" height="45px">
-      <div class="c-note-box__name">{{user.user_name}}</div>
+    <div class="c-note-box" v-for="(fri, index) in friends" :key="index">
+      <img :src="fri.fri_avatar" alt="da" width="45px" height="45px">
+      <div class="c-note-box__name">{{fri.fri_name}}</div>
       <div class="c-note-box__bts">
         <i class="el-icon-check" @click="resolve(index)"></i>
         <i class="el-icon-close" @click="reject(index)"></i>
@@ -14,27 +14,27 @@
 
 <script>
 export default {
+  props:{
+    friends:{
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
-      fri: [
-        {
-          user_name:'吴英东'
-        },
-        {
-          user_name:'吴英2'
-        },
-        {
-          user_name:'吴英3'
-        },
-      ],
-    };
+      user_info:JSON.parse(window.sessionStorage.getItem('USER_INFO')) || {}
+    }
   },
   methods:{
     resolve(index){
-      this.fri.splice(index,1)
+      // this.fri.splice(index,1)
+      this.$socket.emit('chum request status', this.user_info.user_id, this.user_info.user_name, this.friends[index].fri_id, this.friends[index].fri_name, 1)
+      this.$emit('clearReq', index)
     },
     reject(index){
-      this.fri.splice(index,1)
+      // this.fri.splice(index,1)
+      this.$socket.emit('chum request status', this.user_info.user_id, this.user_info.user_name, this.friends[index].fri_id, this.friends[index].fri_name, 0)
+      this.$emit('clearReq', index)
     }
   }
 }
