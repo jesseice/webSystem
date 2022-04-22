@@ -13,13 +13,12 @@ const routes = [
       // 首页
       {
         path:'',
-        name:'home',
         component: () => import('@/view/home'),
         children:[
           // 首页
           {
             path: '',
-            name: 'home1',
+            name: 'home',
             component: () => import('@/view/home/views/home.vue')
           },
           // 个人资料设置
