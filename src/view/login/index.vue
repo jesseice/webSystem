@@ -1,6 +1,7 @@
 <template>
   <div class="p-login">
     <el-card class="box-card">
+      <div class="box-card__title">前端测评系统</div>
       <!-- 登录 -->
       <div class="p-login__wrap" v-show="registOrLogin===1">
         <el-form ref="form1" :model="form1" label-width="120px">
@@ -188,8 +189,8 @@ export default {
   overflow: hidden;
   position: relative;
   .box-card{
-    // background: linear-gradient(-180deg, #dcf2e6 0%, #ffffff 100%);
-    background-image: url('~@/assets/img/login_bg.png');
+    background: linear-gradient(-180deg, #56cae7 0%, #dbe2e2 100%);
+    // background-image: url('~@/assets/img/login_bg.png');
     background-position: center 0;
     background-size: cover;
     background-repeat: no-repeat;
@@ -201,6 +202,15 @@ export default {
     height: 537px;
     box-sizing: border-box;
     padding: 30px;
+    .box-card__title{
+      position: absolute;
+      transform: translate(-50%,0);
+      left: 50%;
+      top: 30px;
+      font-size: 50px;
+      color: white;
+      font-family: cursive;
+    }
     .p-login__wrap{
       position: absolute;
       transform: translate(-50%,-50%);

@@ -44,6 +44,7 @@ export default {
     return {
       drawer:false,
       direction: 'rtl',
+      current: undefined
     };
   },
   created(){
@@ -53,10 +54,9 @@ export default {
   },
   methods:{
     handleSelect(index){
-      // console.log(index);
       switch(index){
         case '1':
-          console.log(1);
+          this.goSet();
         break;
         case '2':
           this.goNews()
@@ -65,6 +65,13 @@ export default {
           this.outLogin()
         break;
       }
+    },
+    goSet(){
+      let str = window.location.hash
+      if(/\/set/.test(str)){
+        return this.$message.info('已在该页面')
+      }
+      this.$router.push('/set')
     },
     goNews(){
       this.$router.push('/news')

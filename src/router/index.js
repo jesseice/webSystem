@@ -14,7 +14,21 @@ const routes = [
       {
         path:'',
         name:'home',
-        component: () => import('@/view/home')
+        component: () => import('@/view/home'),
+        children:[
+          // 首页
+          {
+            path: '',
+            name: 'home1',
+            component: () => import('@/view/home/views/home.vue')
+          },
+          // 个人资料设置
+          {
+            path: '/set',
+            name: 'set',
+            component: () => import('@/view/home/views/set.vue')
+          },
+        ]
       },
       // 模拟考试页
       {
