@@ -1,11 +1,11 @@
 <template>
   <div :class="{'c-fri':true,'current':index === curIndex}" @click="click">
-    <div :class="{'c-fri-left':true, 'my__badge--news':whoSendMsgs.has(friInfo.user_name)}">
+    <div :class="{'c-fri-left':true, 'my__badge--news':hasMsg}">
       <img :src="friInfo.friend_avatar" width="43px" height="43px" alt="">
     </div>
     <div class="c-fri-middle">
       <div class="c-fri-middle__name">{{friInfo.friend_name}}</div>
-      <div class="c-fri-middle__news">{{friInfo.news}}</div>
+      <div class="c-fri-middle__news">{{lastMsg}}</div>
     </div>
     <div class="c-fri-right">
       <div class="c-fri-right__time">{{friInfo.time}}</div>
@@ -16,6 +16,10 @@
 <script>
 export default {
   props:{
+    friMsg:{
+      type:Array,
+      default:()=>[]
+    },
     friInfo:{
       type:Object,
       default:()=>{}
@@ -29,8 +33,19 @@ export default {
       default:0
     },
     whoSendMsgs:{
-      type:Map,
-      default:()=>new Map()
+      type:Array,
+      default:()=>[]
+    }
+  },
+  computed:{
+    hasMsg(){
+      return this.whoSendMsgs.findIndex(val=>val === this.friInfo.user_name)>=0?true:false
+    },
+    lastMsg(){
+      if( !this.friMsg.length){return '暂无消息'}
+      let len = this.friMsg.length
+      let last = this.friMsg[len-1]
+      return last[1]
     }
   },
   methods:{
@@ -86,6 +101,7 @@ export default {
   }
   
   .c-fri-right{
+    width: 38px;
     .c-fri-right__time{
       text-align: right;
       color: rgb(148, 147, 147);

@@ -10,7 +10,11 @@ import '@/styles/reset.css';
 import { io } from "socket.io-client";
 import VueParticles from 'vue-particles'
 // 服务器地址
-const pro_url = 'http://127.0.0.1:3000/'
+const produce = false
+let pro_url = 'http://127.0.0.1:3000/'
+if (produce) {
+  pro_url = 'http://112.74.175.17:5000/'
+}
 
 const socket = io(pro_url)
 

@@ -20,6 +20,7 @@
             :index="index"
             :curIndex="curIndex"
             :whoSendMsgs="whoSendMsgs"
+            :friMsg="msgs[item.user_name]"
             @atFriend = atFriend
           ></friend-list>
         </div>
@@ -149,9 +150,11 @@ export default {
     this.$socket.on('check leave msg',(authorName,msg)=>{
       console.log(`收到${authorName}发的消息：`,msg)
 
-      this.whoSendMsgs.set(authorName,true)
+      let index = this.whoSendMsgs.findIndex(val => val === authorName)
+      if(index<0){
+        this.whoSendMsgs.push(authorName)
+      }
       
-
       this.$nextTick(()=>{
         this.msgs[authorName].push(['left',msg])
       })
@@ -181,7 +184,10 @@ export default {
     this.$socket.on('private message',(fri_socketid,msg,authorName)=>{
       console.log('接收到的信息：',msg,'来自',authorName)
 
-      this.whoSendMsgs.set(authorName,true)
+      let index = this.whoSendMsgs.findIndex(val => val === authorName)
+      if(index<0){
+        this.whoSendMsgs.push(authorName)
+      }
 
       // 此处的authorName不要改成this.this.cur_fri_name
       this.msgs[authorName].push(['left',msg])
@@ -232,7 +238,7 @@ export default {
       my_name:JSON.parse(window.sessionStorage.getItem('USER_INFO')).user_name||'',
       // msg:[], // fri_name:[['left','在吗'],['right','在啊,怎么了']],
       msgs:{}, // {fri_name:[['left','在吗'],['right','在啊,怎么了']],fri_name:[['left','在吗'],['right','在啊,怎么了']]}
-      whoSendMsgs:new Map(), // 谁发了消息，我是未读的
+      whoSendMsgs:[], // 谁发了消息，我是未读的
       friReqs:[] // 存哪个用户发过来的好友请求信息
     };
   },
@@ -283,9 +289,12 @@ export default {
     atFriend(friend,curIndex){
       // friend.user_name
       this.cur_fri_name = friend.user_name
-
-      if(this.whoSendMsgs.has(friend.user_name)){
-        this.whoSendMsgs.delete(friend.user_name)
+      let index
+      if(this.whoSendMsgs.length){
+        index = this.whoSendMsgs.findIndex(val => val === friend.user_name)
+      }
+      if(index >= 0){
+        this.whoSendMsgs.splice(index, 1)
       }
       // console.log(friend)
       this.$socket.emit('find friend socketid',friend.user_name)

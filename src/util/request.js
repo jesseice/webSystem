@@ -2,8 +2,13 @@ import axios from 'axios'
 import store from '@/store'
 import router from '@/router'
 import { MessageBox } from 'element-ui'
+const produce = false
+let baseURL = 'http://127.0.0.1:3000/'
+if (produce){
+  baseURL = 'http://112.74.175.17:5000/'
+}
 const request = axios.create({
-  baseURL: 'http://127.0.0.1:3000/',
+  baseURL,
   timeout:10000
 })
 
