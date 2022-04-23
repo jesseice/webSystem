@@ -2,7 +2,7 @@ import { registUser } from './regist';
 import { login } from './login'
 import { getSubject, commitResult, getSubNum, watchTopic } from './exam'
 import { createQ, getTag } from './draw'
-import { getUserInfo, getFriendList, getPrivateTopic, collectTopic, hasCollection, findFriend } from './user'
+import { getUserInfo, getFriendList, getPrivateTopic, collectTopic, hasCollection, findFriend, setInfo, setPassword } from './user'
 
 export default {
   registUser, // 注册
@@ -18,5 +18,7 @@ export default {
   collectTopic,
   hasCollection,
   findFriend,
-  watchTopic
+  watchTopic,
+  setInfo,
+  setPassword
 }

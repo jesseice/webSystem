@@ -49,3 +49,20 @@ export const findFriend = param =>{
     url: `/user/find/friend?user_name=${param}`,
   })
 }
+
+// 修改资料
+export const setInfo = data =>{
+  return request({
+    method:'POST',
+    url: '/user/set/info',
+    data
+  })
+}
+// 修改密码
+export const setPassword = data =>{
+  return request({
+    method:'POST',
+    url: '/user/set/password',
+    data
+  })
+}

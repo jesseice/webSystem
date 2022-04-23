@@ -13,9 +13,6 @@
         direction="vertical"
         border
         :column="2">
-        <template slot="extra">
-          <el-button type="primary" size="small">操作</el-button>
-        </template>
 
         <el-descriptions-item >
           <template slot="label">
@@ -43,6 +40,11 @@
               type="primary"
               icon="el-icon-upload"
               @click="save(item)">保存</el-link>
+              &nbsp;&nbsp;
+            <el-link
+              type="primary"
+              icon="el-icon-circle-close"
+              @click="cansel(item)">取消</el-link>
           </div>
           <span v-else>{{userInfo[item.prop] || '-'}}</span>
           <el-link
@@ -58,19 +60,31 @@
             密码
           </template>
           *****************
-          <el-link type="primary" icon="el-icon-edit">修改密码</el-link>
+          <el-link type="primary" icon="el-icon-edit" @click="dialogTableVisible = !dialogTableVisible">修改密码</el-link>
         </el-descriptions-item>
       </el-descriptions>
     </div>
+    <el-dialog title="Edit user password" :visible.sync="dialogTableVisible">
+      <edit-password></edit-password>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import api from '@/api'
+import EditPassword from '../components/editPassword'
 export default {
-  created(){
-    let userinfo = JSON.parse(window.sessionStorage.getItem('USER_INFO'))
-    this.userInfo = userinfo
-    this.initInfo = userinfo
+  components:{
+    EditPassword
+  },
+  async created(){
+    const res = await api.getUserInfo()
+    if(res.code === 200){
+      let user = res.data[0]
+      let userinfo = user
+      this.userInfo = userinfo
+      this.initInfo = {...userinfo}
+    }
   },
   data() {
     return {
@@ -119,15 +133,42 @@ export default {
         user_sex:'',
         user_phone:''
       },
-      initInfo:null
+      initInfo:null,
+      dialogTableVisible:false
     }
   },
   methods:{
+    // item为userInfoWrap中的对象
     edit(item){
       item.isEdit = true
     },
-    save(item){
+    async save(item){
+      const dat = {}
+      dat.name = item.prop
+      dat.value = this.userInfo[item.prop]
+      if(item.prop === 'user_phone'){
+        if(!/^1[34578]\d{9}$/.test(dat.value)){
+          this.$message.error('请输入正确的手机号')
+          return false
+        }
+      }
+      if(!dat.value === this.initInfo[item.prop]){
+        const res = await api.setInfo(dat)
+        if(res.code === 200){
+          item.isEdit = false
+          this.$message.success(res.msg)
+        }else{
+          this.reSet(item)
+          this.$message.error(res.msg)
+        }
+      }
+    },
+    cansel(item){
+      this.reSet(item)
       item.isEdit = false
+    },
+    reSet(item){
+       this.userInfo[item.prop] = this.initInfo[item.prop]
     }
   }
 }
