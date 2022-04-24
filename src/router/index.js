@@ -67,6 +67,11 @@ const routes = [
     name:'news',
     component: () => import('@/view/news')
   },
+  {
+    path:'/xbk',
+    name:'xbk',
+    component: () => import('@/view/xbk')
+  },
   // 错误地址时跳转的路由
   {
     path: '*',

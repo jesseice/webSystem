@@ -2,10 +2,11 @@ import axios from 'axios'
 import store from '@/store'
 import router from '@/router'
 import { MessageBox } from 'element-ui'
-const produce = true
-let baseURL = 'http://127.0.0.1:3000/'
-if (produce){
-  baseURL = 'http://112.74.175.17:5000/'
+let baseURL = process.env.VUE_APP_API_URL
+if (process.env.VUE_APP_MODE === 'development') {
+  //开发环境下的执行操作
+} else if (process.env.VUE_APP_MODE === 'test') {
+  //测试环境下的执行操作
 }
 const request = axios.create({
   baseURL,
