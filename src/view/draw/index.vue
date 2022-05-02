@@ -103,7 +103,6 @@ export default {
     type:{
       handler: function(newVal){
         if(newVal === '1'){
-          console.log(1111)
           this.form.select = [{value:''}, {value:''}]
         }
       }
@@ -201,7 +200,7 @@ export default {
       }
       const res = await api.createQ(form)
       if(res.code === 200){
-        console.log(res)
+        // console.log(res)
         this.$message.success(res.msg)
         this.addCollect(res.data)
         this.reSet()

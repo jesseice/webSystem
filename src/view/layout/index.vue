@@ -2,16 +2,16 @@
   <div class="p-layout">
     <div style="height:61px; width:100% position:relative"></div>
     <el-menu
-      :default-active="activeIndex"
+      :default-active="$route.path"
       mode="horizontal"
-      @select="handleSelect"
       background-color="#409EFF"
       text-color="#fff"
+      :router="true"
       active-text-color="#ffd04b">
-      <el-menu-item index="1" >首页</el-menu-item>
-      <el-menu-item index="2">模拟考试</el-menu-item>
-      <el-menu-item index="3">创建题目</el-menu-item>
-      <el-menu-item index="4">个人题库</el-menu-item>
+      <el-menu-item index="/home">首页</el-menu-item>
+      <el-menu-item index="/exam">模拟考试</el-menu-item>
+      <el-menu-item index="/draw">创建题目</el-menu-item>
+      <el-menu-item index="/question">个人题库</el-menu-item>
       <el-menu-item class="p-layout__login" @click="login(1)" v-if="!isLogin">登录 | 注册</el-menu-item>
       <el-menu-item :class="{'p-layout__login':true, 'my__badge':hasMsg}" @click="login(2)" v-else>
         <el-avatar :src="user.user_avatar"></el-avatar>
@@ -39,15 +39,14 @@ export default {
   },
   data() {
     return {
-      activeIndex:'1',
-      currentIndex:'1',
+      // activeIndex:'1',
+      // currentIndex:'1',
       user:{}
     };
   },
   async created(){
-    console.log(process.env)
     // 防止刷新丢失菜单选中项的状态
-    this.activeIndex = JSON.parse(window.sessionStorage.getItem("currentIndex"))  || '1'
+    // this.activeIndex = JSON.parse(window.sessionStorage.getItem("currentIndex"))  || '1'
 
     const user =await api.getUserInfo()
     this.user = user.data[0]
@@ -68,55 +67,55 @@ export default {
     }
   },
   methods:{
-    handleSelect(index){
-      if(index === this.currentIndex){return false}
-      switch (index){
-        case '1': 
-          this.home()
-        break;
-        case '2':
-          this.exam()
-        break;
-        case '3':
-          this.draw()
-        break;
-        case '4':
-          this.question()
-        break;
-      }
-      this.currentIndex = index
+    // handleSelect(index){
+    //   if(index === this.currentIndex){return false}
+    //   switch (index){
+    //     case '1': 
+    //       this.home()
+    //     break;
+    //     case '2':
+    //       this.exam()
+    //     break;
+    //     case '3':
+    //       this.draw()
+    //     break;
+    //     case '4':
+    //       this.question()
+    //     break;
+    //   }
+    //   this.currentIndex = index
       
-      window.sessionStorage.setItem("currentIndex",JSON.stringify(index))
-    },
+    //   window.sessionStorage.setItem("currentIndex",JSON.stringify(index))
+    // },
     // 首页
-    home(){
-      this.$router.push({ path: '/' })
-    },
+    // home(){
+    //   this.$router.push({ path: '/home' })
+    // },
     // 模拟考试
-    exam(){
-      this.$router.push({ path: '/exam' })
-    },
+    // exam(){
+    //   this.$router.push({ path: '/exam' })
+    // },
     // 创建题目
-    draw(){
-      if(!this.isLogin){
-         this.$confirm('未登录,是否立即跳转登录页?', '提示', {
-          confirmButtonText: '是',
-          cancelButtonText: '稍后',
-          type: 'warning',
-          center: true
-        }).then(() => {
-          this.login(1)
-        }).catch(() => {
-           this.$router.push({ path: '/draw' })
-        });
-      }else{
-        this.$router.push({ path: '/draw' })
-      }
-    },
+    // draw(){
+    //   if(!this.isLogin){
+    //      this.$confirm('未登录,是否立即跳转登录页?', '提示', {
+    //       confirmButtonText: '是',
+    //       cancelButtonText: '稍后',
+    //       type: 'warning',
+    //       center: true
+    //     }).then(() => {
+    //       this.login(1)
+    //     }).catch(() => {
+    //        this.$router.push({ path: '/draw' })
+    //     });
+    //   }else{
+    //     this.$router.push({ path: '/draw' })
+    //   }
+    // },
     // 个人题库
-    question(){
-      this.$router.push({ path: '/question' })
-    },
+    // question(){
+    //   this.$router.push({ path: '/question' })
+    // },
     login(index){
       if(index ===1){
         this.$router.push({path:'/login'})

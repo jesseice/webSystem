@@ -96,7 +96,7 @@ export default {
          
           const res = await api.login({userName:this.form1.acount,userPassword:aa})
 
-          console.log(res.token)
+          // console.log(res.token)
 
           if(res.code === "200"){
             this.$message.success(res.msg)

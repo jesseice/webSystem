@@ -139,16 +139,16 @@ export default {
     // 获取好友列表
     const res =await api.getFriendList()
     this.getFri(res)
-    console.log(this.friend_list)
+    // console.log(this.friend_list)
     // 获得当前好友的socketid
     this.$socket.on('find friend socketid',(my_socketid,fri_socketid)=>{
       this.cur_fri_socket_id = fri_socketid
-      console.log('获取到的好友的socketid为',this.cur_fri_socket_id);
+      // console.log('获取到的好友的socketid为',this.cur_fri_socket_id);
     })
 
     // 监听离线消息
     this.$socket.on('check leave msg',(authorName,msg)=>{
-      console.log(`收到${authorName}发的消息：`,msg)
+      // console.log(`收到${authorName}发的消息：`,msg)
 
       let index = this.whoSendMsgs.findIndex(val => val === authorName)
       if(index<0){
@@ -162,7 +162,7 @@ export default {
 
     // 监听离线好友请求信息
     this.$socket.on('check leave chum req', msgArr =>{
-      console.log(msgArr)
+      // console.log(msgArr)
       try{
         this.friReqs.push(...msgArr)
       }catch(err){
@@ -182,7 +182,7 @@ export default {
 
     // 监听私聊信息
     this.$socket.on('private message',(fri_socketid,msg,authorName)=>{
-      console.log('接收到的信息：',msg,'来自',authorName)
+      // console.log('接收到的信息：',msg,'来自',authorName)
 
       let index = this.whoSendMsgs.findIndex(val => val === authorName)
       if(index<0){
@@ -197,7 +197,7 @@ export default {
 
     // 好友请求反馈 
     this.$socket.on('back fri req status', async status =>{
-      console.log('status',status)
+      // console.log('status',status)
       if(status){
         let r = await api.getFriendList()
         this.getFri(r)
@@ -206,7 +206,7 @@ export default {
 
     // 监听好友请求
     this.$socket.on('add friend', (fri_id, fri_name, fri_avatar)=>{
-      console.log(fri_name,fri_id)
+      // console.log(fri_name,fri_id)
       this.friReqs.push({fri_name, fri_id, fri_avatar})
     })
   },
@@ -261,7 +261,7 @@ export default {
           }
           for(let i =0;i< this.friend_list.length;i++){
             if(!this.msgs[this.friend_list[i].user_name]){
-              console.log(1);
+              // console.log(1);
               this.msgs[this.friend_list[i].user_name] = []
             }
           }

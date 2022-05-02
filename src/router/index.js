@@ -9,6 +9,7 @@ const routes = [
     // url为'/'时匹配的路,layout组件中有路由的出口<router-view>,用来展示其他页面如children中的路由
     path: '/',
     component: () => import('@/view/layout'),
+    redirect: { name: 'home' },
     children:[
       // 首页
       {
@@ -17,7 +18,7 @@ const routes = [
         children:[
           // 首页
           {
-            path: '',
+            path: '/home',
             name: 'home',
             component: () => import('@/view/home/views/home.vue')
           },

@@ -57,7 +57,6 @@ export default {
       this.subject_result = []
       for(let k in this.currentIndex){
         if(this.currentIndex[k]===true){
-          console.log(k);
           this.subject_result.push(k)
         }
       }

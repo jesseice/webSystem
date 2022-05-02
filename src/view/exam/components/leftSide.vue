@@ -103,13 +103,13 @@ export default {
       }).then(() => {
         this.$message.success('已退出考试!')
         this.$store.commit('updateIsExam',false)
-        this.$router.replace('/')
+        this.$router.replace('/home')
       }).catch((err) => {
         console.log(err)
       })
     },
     out(){
-      this.$router.replace('/')
+      this.$router.replace('/home')
     },
     resolveError(data){
       let res = data

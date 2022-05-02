@@ -69,11 +69,11 @@ export default {
           if(a.length !== this.form.zimushu*(this.form.zimushu - 1)/2){
             return this.$message.error('输入的数据数量不对')
           }
-          console.log(a)
+          // console.log(a)
           a.forEach((val, index)=>{
             newNums[index] = val*1
           })
-          console.log(newNums)
+          // console.log(newNums)
           let len = this.form.zimushu*1
           let arr1 = []
           let arr2
@@ -94,7 +94,7 @@ export default {
           let res = this.mSort(Obj,newNums)
           this.dat = res
           this.show = true
-          console.log(res)
+          // console.log(res)
         }else{
           return false
         }

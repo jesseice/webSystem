@@ -45,25 +45,23 @@ export default {
     cansel(){
       this.$emit('changeAva')
     },
-    handleAvatarSuccess(res, file) {
+    handleAvatarSuccess() {
       this.$message.success('上传头像成功！')
-      console.log(res)
-      console.log(file)
       // 上级
       this.$emit('changeAva')
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg';
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
 
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!');
+        this.$message.error('上传头像图片只能是 JPG 格式!')
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
+        this.$message.error('上传头像图片大小不能超过 2MB!')
       }
       // false 不上传， true反之
-      return isJPG && isLt2M;
+      return isJPG && isLt2M
     }
   }
 }

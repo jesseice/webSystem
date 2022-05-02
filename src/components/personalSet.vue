@@ -13,7 +13,7 @@
         @select="handleSelect"
         background-color="#545c64"
         text-color="#fff"
-        active-text-color="#ffd04b"
+        active-text-color="#fff"
         >
         <el-menu-item index="1">
           <i class="el-icon-setting"></i>
@@ -88,7 +88,6 @@ export default {
         this.$store.commit('updateLogin',[0,''])
         eventBus.$emit('ctrDrawer')
       }).catch(() => {
-        console.log('取消退出');
       })
     }
   }
