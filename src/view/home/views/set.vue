@@ -18,8 +18,13 @@
           <template slot="label">
             头像
           </template>
-          <img :src="userInfo.user_avatar" alt="" width="60px" height="60px">
-          <el-link type="primary" icon="el-icon-edit">更换头像</el-link>
+          <img v-if="!avatarEdit" :src="userInfo.user_avatar" alt="" width="60px" height="60px">
+          <div v-else>
+            <Upload
+              @changeAva="changeAvatarEditStatus"
+            ></Upload>
+          </div>
+          <el-link type="primary" v-if="!avatarEdit" icon="el-icon-edit" @click="changeAvatarEditStatus">更换头像</el-link>
         </el-descriptions-item>
         <el-descriptions-item v-for="item in userInfoWrap" :key="item.type">
           <template slot="label">
@@ -73,9 +78,11 @@
 <script>
 import api from '@/api'
 import EditPassword from '../components/editPassword'
+import Upload from '@/components/upload'
 export default {
   components:{
-    EditPassword
+    EditPassword,
+    Upload
   },
   async created(){
     const res = await api.getUserInfo()
@@ -134,7 +141,8 @@ export default {
         user_phone:''
       },
       initInfo:null,
-      dialogTableVisible:false
+      dialogTableVisible:false,
+      avatarEdit:false
     }
   },
   methods:{
@@ -169,6 +177,9 @@ export default {
     },
     reSet(item){
        this.userInfo[item.prop] = this.initInfo[item.prop]
+    },
+    changeAvatarEditStatus(){
+      this.avatarEdit = !this.avatarEdit
     }
   }
 }
