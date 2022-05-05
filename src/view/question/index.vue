@@ -115,6 +115,9 @@ export default {
   },
   async created(){
     let res = await api.getPrivateTopic()
+    if(res.code !== 200){
+      return false
+    }
     let newRes = res.map(val=>{
       return {
         privateTopic_id:val.pri_id,
