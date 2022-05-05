@@ -49,6 +49,9 @@ export default {
     // this.activeIndex = JSON.parse(window.sessionStorage.getItem("currentIndex"))  || '1'
 
     const user =await api.getUserInfo()
+    if(user.code !== 200){
+      return false
+    }
     this.user = user.data[0]
     window.sessionStorage.setItem(USER_INFO,JSON.stringify(this.user))
     // 保存给APP.vue用
