@@ -7,7 +7,7 @@
       <div style="text-align:center;margin-bottom:20px; color: #409EFF;">题卡</div>
       <el-divider></el-divider>
       <div class="c-l-side__qc">
-        <div class="c-l-side__num" v-for="(item,ind) in obj" :key="ind">
+        <div class="c-l-side__num" v-for="(item,ind) in obj" :key="item.subject_id">
           <a
             :class="{'c-l-side__num__a':true,
             'a_primary':!sideObj[ind]?false:true,
@@ -109,6 +109,7 @@ export default {
       })
     },
     out(){
+      this.$store.commit('setCheckAnswer',false)
       this.$router.replace('/home')
     },
     resolveError(data){
