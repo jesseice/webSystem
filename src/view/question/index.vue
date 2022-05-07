@@ -118,6 +118,7 @@ export default {
     if(res.code !== 200){
       return false
     }
+    res = res.data
     let newRes = res.map(val=>{
       return {
         privateTopic_id:val.pri_id,

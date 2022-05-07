@@ -75,7 +75,10 @@ export default {
           {required:true,message:'请填写号码',trigger:'blur'},
           {pattern:/^1[34578]\d{9}$/,message:'请输入正确格式的手机号码'}
         ],
-        password:[{ required: true, message: '密码不能为空',trigger:'blur'}]
+        password:[
+          { required: true, message: '密码不能为空',trigger:'blur'},
+          { pattern:/^[\d\w]{8,}/ ,message:'密码必须为8个英文或者数字以上的组合',trigger:'blur'}
+        ]
       }
     };
   },

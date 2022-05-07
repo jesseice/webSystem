@@ -44,22 +44,11 @@ export default {
       user:{}
     };
   },
-  async created(){
+  created(){
     // 防止刷新丢失菜单选中项的状态
     // this.activeIndex = JSON.parse(window.sessionStorage.getItem("currentIndex"))  || '1'
-
-    const user =await api.getUserInfo()
-    if(user.code !== 200){
-      return false
-    }
-    this.user = user.data[0]
-    window.sessionStorage.setItem(USER_INFO,JSON.stringify(this.user))
-    // 保存给APP.vue用
-    this.$store.commit('setUserInfo',this.user)
-    // this.handleSelect(this.activeIndex)
-    this.$socket.emit('is has msg',this.user.user_name)
-
-    this.$socket.emit('is in chat page',this.user.user_name,false)
+    this.getInfo()
+    eventBus.$on('laoutGetInfo', this.getInfo)
   },
   computed:{
     isLogin(){
@@ -70,55 +59,20 @@ export default {
     }
   },
   methods:{
-    // handleSelect(index){
-    //   if(index === this.currentIndex){return false}
-    //   switch (index){
-    //     case '1': 
-    //       this.home()
-    //     break;
-    //     case '2':
-    //       this.exam()
-    //     break;
-    //     case '3':
-    //       this.draw()
-    //     break;
-    //     case '4':
-    //       this.question()
-    //     break;
-    //   }
-    //   this.currentIndex = index
-      
-    //   window.sessionStorage.setItem("currentIndex",JSON.stringify(index))
-    // },
-    // 首页
-    // home(){
-    //   this.$router.push({ path: '/home' })
-    // },
-    // 模拟考试
-    // exam(){
-    //   this.$router.push({ path: '/exam' })
-    // },
-    // 创建题目
-    // draw(){
-    //   if(!this.isLogin){
-    //      this.$confirm('未登录,是否立即跳转登录页?', '提示', {
-    //       confirmButtonText: '是',
-    //       cancelButtonText: '稍后',
-    //       type: 'warning',
-    //       center: true
-    //     }).then(() => {
-    //       this.login(1)
-    //     }).catch(() => {
-    //        this.$router.push({ path: '/draw' })
-    //     });
-    //   }else{
-    //     this.$router.push({ path: '/draw' })
-    //   }
-    // },
-    // 个人题库
-    // question(){
-    //   this.$router.push({ path: '/question' })
-    // },
+    async getInfo(){
+      const user =await api.getUserInfo()
+      if(user.code !== 200){
+        return false
+      }
+      this.user = user.data[0]
+      window.sessionStorage.setItem(USER_INFO,JSON.stringify(this.user))
+      // 保存给APP.vue用
+      this.$store.commit('setUserInfo',this.user)
+      // this.handleSelect(this.activeIndex)
+      this.$socket.emit('is has msg',this.user.user_name)
+
+      this.$socket.emit('is in chat page',this.user.user_name,false)
+    },
     login(index){
       if(index ===1){
         this.$router.push({path:'/login'})

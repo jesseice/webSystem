@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import eventBus from '@/util/eventbus'
 export default {
   data() {
     return {
@@ -49,6 +50,8 @@ export default {
       this.$message.success('上传头像成功！')
       // 上级
       this.$emit('changeAva')
+      this.$emit('updateInfo')
+      eventBus.$emit('laoutGetInfo')
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg'

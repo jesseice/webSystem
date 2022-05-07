@@ -22,6 +22,7 @@
           <div v-else>
             <Upload
               @changeAva="changeAvatarEditStatus"
+              @updateInfo="getInfo"
             ></Upload>
           </div>
           <el-link type="primary" v-if="!avatarEdit" icon="el-icon-edit" @click="changeAvatarEditStatus">更换头像</el-link>
@@ -84,14 +85,8 @@ export default {
     EditPassword,
     Upload
   },
-  async created(){
-    const res = await api.getUserInfo()
-    if(res.code === 200){
-      let user = res.data[0]
-      let userinfo = user
-      this.userInfo = userinfo
-      this.initInfo = {...userinfo}
-    }
+  created(){
+    this.getInfo()
   },
   data() {
     return {
@@ -146,11 +141,21 @@ export default {
     }
   },
   methods:{
+    async getInfo(){
+      const res = await api.getUserInfo()
+      if(res.code === 200){
+        let user = res.data[0]
+        let userinfo = user
+        this.userInfo = userinfo
+        this.initInfo = {...userinfo}
+      }
+    },
     // item为userInfoWrap中的对象
     edit(item){
       item.isEdit = true
     },
     async save(item){
+      console.log(item)
       const dat = {}
       dat.name = item.prop
       dat.value = this.userInfo[item.prop]
@@ -160,7 +165,7 @@ export default {
           return false
         }
       }
-      if(!dat.value === this.initInfo[item.prop]){
+      if(dat.value !== this.initInfo[item.prop]){
         const res = await api.setInfo(dat)
         if(res.code === 200){
           item.isEdit = false

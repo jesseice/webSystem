@@ -109,6 +109,7 @@ export default {
     },
     // 提交答案
     async commit(){
+      console.log('提交')
       let subRes = {
         '0':this.subResult0,
         '1':this.subResult1,

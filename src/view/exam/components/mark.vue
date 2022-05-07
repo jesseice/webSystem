@@ -54,7 +54,7 @@ export default {
       this.dialogTableVisible = false
     },
     back(){
-      this.$router.replace('/home')
+      this.$router.replace('/exam')
     }
   }
 }

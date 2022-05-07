@@ -23,7 +23,7 @@
       </div>
       <!-- <el-divider></el-divider> -->
       <div class="c-l-side__bt__wrap" v-if="isShow">
-        <el-button type="primary" @click="commit" round>提交試卷</el-button>
+        <el-button type="primary" @click="commit" :loading="loading" round>提交試卷</el-button>
         <el-button type="primary" @click="examOut" round>退出考试</el-button>
       </div>
       <div class="c-l-side__bt__wrap" v-else>
@@ -51,7 +51,8 @@ export default {
       topH: 0,
       timer:null,
       sideObj:{},
-      errorArr:null
+      errorArr:null,
+      loading: false
     };
   },
   created(){
@@ -88,6 +89,7 @@ export default {
         type: 'warning',
         center: true
       }).then(() => {
+        this.loading = true
         this.$message.success('提交成功!')
         eventBus.$emit('commit')
       }).catch((err) => {
@@ -103,14 +105,14 @@ export default {
       }).then(() => {
         this.$message.success('已退出考试!')
         this.$store.commit('updateIsExam',false)
-        this.$router.replace('/home')
+        this.$router.replace('/exam')
       }).catch((err) => {
         console.log(err)
       })
     },
     out(){
       this.$store.commit('setCheckAnswer',false)
-      this.$router.replace('/home')
+      this.$router.replace('/exam')
     },
     resolveError(data){
       let res = data

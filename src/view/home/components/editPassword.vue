@@ -63,16 +63,22 @@ export default {
   },
   methods:{
     async onSubmit(){
-      const res = await api.setPassword(this.Form)
-      if(res.code === 200){
-        this.$message.success(res.msg+'两秒后自动跳转登录页！')
-        let a = JSON.parse(window.sessionStorage.getItem('USER_INFO'))
-        this.$socket.emit('out login',a.user_name)
-        this.$store.commit('updateLogin',[0,''])
-        setTimeout(()=>{this.$router.push('/login')},2000)
-      }else{
-        this.$message.error(res.msg)
-      }
+      this.$refs['Form'].validate(async valid=>{
+        if(valid){
+          const res = await api.setPassword(this.Form)
+          if(res.code === 200){
+            this.$message.success(res.msg+'两秒后自动跳转登录页！')
+            let a = JSON.parse(window.sessionStorage.getItem('USER_INFO'))
+            this.$socket.emit('out login',a.user_name)
+            this.$store.commit('updateLogin',[0,''])
+            setTimeout(()=>{this.$router.push('/login')},2000)
+          }else{
+            this.$message.error(res.msg)
+          }
+        }else{
+          this.$message.error('提交失败!请检查输入格式!')
+        }
+      })
     },
     onCansel(){
       this.$refs['Form'].resetFields()
